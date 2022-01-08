@@ -2,9 +2,11 @@ import 'package:drivo/core/app.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'pages.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init('main');
   runApp(const MyApp());
 }
 

@@ -1,7 +1,7 @@
 import 'package:get_storage/get_storage.dart';
 
 class StorageDriver {
-  static final _storage = GetStorage();
+  static final _storage = GetStorage('main');
   GetStorage get driver => _storage;
 
   static Future<void> write(String key, value) async {

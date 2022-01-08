@@ -17,10 +17,14 @@ class Token {
         refreshExpiresIn: json['refresh_token_expires_in']);
   }
 
-  toJson() => {
+  Map toJson() => {
         'token': token,
         'token_expires_in': expiresIn,
         'refresh_token': refreshToken,
         'refresh_token_expires_in': refreshExpiresIn
       };
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

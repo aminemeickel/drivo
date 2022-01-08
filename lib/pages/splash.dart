@@ -1,7 +1,8 @@
 import 'dart:async';
 
+import 'package:drivo/controllers/auth_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/pages/login.dart';
+import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     ///Simplest way to do this ... it can be done with future builder but
-    /// it will much more complicate
+    /// it will much more complicated
 
     ///switching the color
     Timer(const Duration(seconds: 1), () {
@@ -34,7 +35,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
     ///switching the page
     Future.delayed(const Duration(seconds: 2, milliseconds: 300), () {
-      Get.offNamed(Login.id);
+      if (AuthController.isAuthnthicated) {
+        Get.offNamed(HomePage.id);
+      } else {
+        Get.offNamed(Login.id);
+      }
     });
   }
 
