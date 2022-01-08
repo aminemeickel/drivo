@@ -1,6 +1,7 @@
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/core/log.dart';
+import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -120,8 +121,14 @@ class _LoginState extends State<Login> {
         var response = await ApiService.login(
             username: _mailController.text, password: _passwordController.text);
         if (response != null && response.statusCode == 200) {
-          Log.verbose(response.data);
-        } else {}
+          Get.offAllNamed(HomePage.id);
+        } else {
+          var messages = response?.data;
+          if (messages != null) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(messages['message'])));
+          }
+        }
       }
     } else {
       Fluttertoast.showToast(msg: 'Please read and agree on terms');

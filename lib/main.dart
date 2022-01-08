@@ -1,4 +1,5 @@
 import 'package:drivo/core/app.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'pages.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: SplashScreen.id, page: () => const SplashScreen()),
         GetPage(name: Login.id, page: () => const Login()),
+        GetPage(name: HomePage.id, page: () => const HomePage()),
       ],
       theme: ThemeData(
           fontFamily: 'Montserrat',
