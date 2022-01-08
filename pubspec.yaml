@@ -13,6 +13,7 @@ dependencies:
   dio: ^4.0.4
   flutter:
     sdk: flutter
+  fluttertoast: ^8.0.8
   get: ^4.6.1
   get_storage: ^2.0.3
   google_fonts: ^2.2.0
@@ -39,6 +40,3 @@ flutter:
         - asset: assets/fonts/Montserrat-Light.ttf
         - asset: assets/fonts/Montserrat-Medium.ttf
         - asset: assets/fonts/Montserrat-Regular.ttf
-          
-      
-          

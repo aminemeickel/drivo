@@ -1,6 +1,7 @@
-import 'package:drivo/pages/splash.dart';
+import 'package:drivo/core/app.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'pages.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,13 +13,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Drivo',
+      title: APPNAME,
       debugShowCheckedModeBanner: false,
+      getPages: [
+        GetPage(name: SplashScreen.id, page: () => const SplashScreen()),
+        GetPage(name: Login.id, page: () => const Login()),
+      ],
       theme: ThemeData(
-        textTheme: TextTheme(bodyText1: TextStyle(fontWeight: FontWeight.bold)),
-        primarySwatch: Colors.blue,
-      ),
-      home: const SplashScreen(),
+          fontFamily: 'Montserrat',
+          textTheme: const TextTheme(
+              bodyText1: TextStyle(fontWeight: FontWeight.bold)),
+          primarySwatch: Colors.blue),
+      initialRoute: '/splash',
     );
   }
 }
