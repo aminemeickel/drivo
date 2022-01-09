@@ -21,7 +21,16 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: SplashScreen.id, page: () => const SplashScreen()),
         GetPage(name: Login.id, page: () => const Login()),
-        GetPage(name: HomePage.id, page: () => const HomePage()),
+        GetPage(
+            name: HomePage.id,
+            page: () => const HomePage(),
+            curve: Curves.bounceIn),
+        GetPage(
+            name: Profile.id,
+            page: () => const Profile(),
+            curve: Curves.bounceIn),
+        GetPage(
+            name: Orders.id, page: () => const Orders(), curve: Curves.bounceIn)
       ],
       theme: ThemeData(
           fontFamily: 'Montserrat',

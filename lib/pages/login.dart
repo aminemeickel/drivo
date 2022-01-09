@@ -1,6 +1,6 @@
+import 'package:drivo/component/main_button.dart';
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -99,7 +99,7 @@ class _LoginState extends State<Login> {
                       SizedBox(
                           width: Get.width,
                           height: 45,
-                          child: LoginButton(
+                          child: MainButton(
                               onpressd: _signIn,
                               text: const Text('Continue',
                                   style: TextStyle(fontSize: 18)))),
@@ -174,22 +174,4 @@ class LoginFormFiled extends StatelessWidget {
   InputBorder get _border => OutlineInputBorder(
       borderRadius: BorderRadius.circular(5),
       borderSide: const BorderSide(color: Color(0XFFD7D7D7)));
-}
-
-class LoginButton extends StatelessWidget {
-  final VoidCallback? onpressd;
-  final Widget text;
-  const LoginButton({Key? key, required this.text, this.onpressd})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: onpressd,
-        style: ElevatedButton.styleFrom(
-            primary: kAppPrimaryColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-        child: text);
-  }
 }
