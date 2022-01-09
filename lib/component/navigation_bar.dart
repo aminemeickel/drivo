@@ -1,5 +1,5 @@
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
+
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

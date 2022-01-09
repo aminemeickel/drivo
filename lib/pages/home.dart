@@ -2,6 +2,7 @@ import 'package:drivo/component/location_map.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -179,7 +180,9 @@ class ItemTile extends StatelessWidget {
                   child: IconButton(
                       padding: EdgeInsets.zero,
                       iconSize: 20,
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.toNamed(ItemViewer.id);
+                      },
                       icon: const Icon(Icons.arrow_forward_ios,
                           color: kAppPrimaryColor, size: 20)),
                 )

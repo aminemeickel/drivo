@@ -1,5 +1,4 @@
 import 'package:drivo/core/app.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,13 +23,17 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: HomePage.id,
             page: () => const HomePage(),
-            curve: Curves.bounceIn),
+            curve: Curves.easeIn),
         GetPage(
             name: Profile.id,
             page: () => const Profile(),
-            curve: Curves.bounceIn),
+            curve: Curves.easeIn),
         GetPage(
-            name: Orders.id, page: () => const Orders(), curve: Curves.bounceIn)
+            name: Orders.id, page: () => const Orders(), curve: Curves.easeIn),
+        GetPage(
+            name: ItemViewer.id,
+            page: () => const ItemViewer(),
+            curve: Curves.easeIn)
       ],
       theme: ThemeData(
           fontFamily: 'Montserrat',
