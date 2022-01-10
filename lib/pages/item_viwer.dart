@@ -1,5 +1,9 @@
+import 'dart:ui';
+
+import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +16,7 @@ class ItemViewer extends StatefulWidget {
 }
 
 class _ItemViewerState extends State<ItemViewer> {
+  int mints = 0;
   final card = {
     'Phone': 'call_out.png',
     'Details': 'documnt.png',
@@ -22,6 +27,39 @@ class _ItemViewerState extends State<ItemViewer> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: const AppNavigationBar(),
+      bottomSheet: Container(
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 0.1)
+        ]),
+        width: Get.width,
+        child: Row(
+          children: [
+            SizedBox(
+              width: Get.width / 2,
+              height: 60,
+              child: MainButtonSecondary(
+                text: const Text('Cancel',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: kAppPrimaryColor,
+                        fontWeight: FontWeight.w600)),
+                onpressd: () {},
+              ).paddingSymmetric(vertical: 9, horizontal: 10),
+            ),
+            SizedBox(
+              width: Get.width / 2,
+              height: 60,
+              child: MainButton(
+                text: const Text('Complete', style: TextStyle(fontSize: 18)),
+                onpressd: () {},
+              ).paddingSymmetric(vertical: 9, horizontal: 10),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           const _ItemViewerHeader(),
@@ -55,7 +93,23 @@ class _ItemViewerState extends State<ItemViewer> {
                   children: [
                     const Text('4:55 pm'),
                     const SizedBox(width: 5),
-                    Image.asset('$kIconsPath/edit.png', width: 25, height: 25)
+                    InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              builder: (context) => BottomSheetModel(
+                                  mins: mints,
+                                  onPress: (number) {
+                                    setState(() {
+                                      mints = number;
+                                    });
+                                    Log.verbose(mints);
+                                  }));
+                        },
+                        child: Image.asset('$kIconsPath/edit.png',
+                            width: 25, height: 25))
                   ],
                 ),
               ),
@@ -93,11 +147,109 @@ class _ItemViewerState extends State<ItemViewer> {
                       ),
                     ))
                 .toList(),
-          )
+          ),
         ],
       ),
     );
   }
+}
+
+class BottomSheetModel extends StatelessWidget {
+  final int mins;
+  final ValueSetter<int> onPress;
+  const BottomSheetModel({Key? key, this.mins = 0, required this.onPress})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+        builder: (context, setState) => BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+                height: Get.height * .7,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(Icons.close))),
+                      const Text('When will this order be ready for pickup?',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w700, fontSize: 16))
+                          .paddingOnly(left: 10),
+                      Expanded(
+                          child: GridView.builder(
+                              itemCount: 6,
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisSpacing: 20,
+                                      mainAxisSpacing: 20,
+                                      crossAxisCount: 2,
+                                      childAspectRatio: 16 / 9),
+                              itemBuilder: (context, index) {
+                                var number = (index + 1) * 5;
+                                return InkWell(
+                                    onTap: () => onPress(number),
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: mins == number
+                                                    ? kAppPrimaryColor
+                                                    : const Color(0xFFD7D7D7)),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                            index == 5
+                                                ? 'Other'
+                                                : '$number mins',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: mins == number
+                                                    ? kAppPrimaryColor
+                                                    : Colors.black))));
+                              })),
+                      const Align(
+                              child: Text('Enter Time'),
+                              alignment: Alignment.centerLeft)
+                          .paddingOnly(left: 20, bottom: 10),
+                      SizedBox(
+                              height: 50,
+                              width: Get.width * .9,
+                              child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.all(10),
+                                      border: _border,
+                                      suffixIcon: const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 14.0, right: 10),
+                                          child: Text('minutes')))))
+                          .paddingOnly(bottom: 20),
+                      SizedBox(
+                              width: Get.width,
+                              height: 55,
+                              child: MainButton(
+                                  text: const Text('Confirm time',
+                                      style: TextStyle(fontSize: 18)),
+                                  onpressd: () {}))
+                          .paddingSymmetric(horizontal: 20),
+                      const SizedBox(height: 10)
+                    ]))));
+  }
+
+  InputBorder get _border => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5),
+      borderSide: const BorderSide(color: Color(0XFFD7D7D7)));
 }
 
 class _ItemViewerHeader extends StatelessWidget {
