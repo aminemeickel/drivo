@@ -1,3 +1,4 @@
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/core/app.dart';
 
 import 'package:drivo/pages.dart';
@@ -6,7 +7,9 @@ import 'package:get/get.dart';
 
 class AppNavigationBar extends StatelessWidget {
   final int position;
-  const AppNavigationBar({Key? key, this.position = 0}) : super(key: key);
+  const AppNavigationBar({Key? key, this.position = 0})
+      : assert(position < 3),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +44,9 @@ class AppNavigationBar extends StatelessWidget {
   BottomNavigationBarItem _navigatinBarItemBuilder(
       String imageName, String label) {
     return BottomNavigationBarItem(
-        icon: Image.asset('$kIconsPath/$imageName',
+        icon: imageFromassets(imageName,
             width: 25, height: 25, color: const Color(0xFFC4C4C4)),
-        activeIcon: Image.asset('$kIconsPath/$imageName',
+        activeIcon: imageFromassets(imageName,
             width: 28, height: 28, color: kAppPrimaryColor),
         label: label);
   }

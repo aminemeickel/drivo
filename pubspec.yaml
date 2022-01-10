@@ -33,6 +33,7 @@ flutter:
     - assets/
     - assets/splashScreen/
     - assets/icons/
+    - assets/dummyData/
   fonts:
     - family: Montserrat
       fonts:

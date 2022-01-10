@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +26,8 @@ class _ProfileState extends State<Profile> {
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15),
                   bottomRight: Radius.circular(15))),
-          leading:
-              Image.asset('$kIconsPath/logo_red.png', width: 70, height: 70)
-                  .paddingOnly(left: 10, right: 10),
+          leading: imageFromassets('logo_red.png', width: 70, height: 70)
+              .paddingOnly(left: 10, right: 10),
           elevation: 10,
           leadingWidth: 100,
         ),
@@ -42,7 +40,7 @@ class _ProfileState extends State<Profile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const SizedBox(width: 15),
-              Image.asset('$kIconsPath/clock.png',
+              imageFromassets('clock.png',
                   color: kAppPrimaryColor, width: 25, height: 25),
               const SizedBox(width: 10),
               _boxTileBuilder(text: 'OPEN'),
@@ -65,7 +63,7 @@ class _ProfileState extends State<Profile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const SizedBox(width: 15),
-              Image.asset('$kIconsPath/clock.png',
+              imageFromassets('clock.png',
                   color: kAppPrimaryColor, width: 25, height: 25),
               const SizedBox(width: 10),
               _boxTileBuilder(text: 'RU'),
@@ -137,7 +135,7 @@ class _ProfileState extends State<Profile> {
               ? const Icon(Icons.arrow_forward_ios,
                   color: kAppPrimaryColor, size: 22)
               : null,
-          leading: Image.asset('$kIconsPath/$iconName',
+          leading: imageFromassets(iconName,
               color: kAppPrimaryColor, width: 25, height: 25)),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/core/app.dart';
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/icons/logo_red.png'),
+              imageFromassets('logo_red.png'),
               Container(
                 margin: EdgeInsets.only(top: Get.height * .14),
                 padding:
@@ -60,7 +61,7 @@ class _LoginState extends State<Login> {
                         hint: 'Username',
                         prefixIcon: Padding(
                             padding: const EdgeInsets.all(13.0),
-                            child: Image.asset('assets/icons/person.png',
+                            child: imageFromassets('person.png',
                                 width: 10, height: 10)),
                         textEditingController: _mailController,
                         validator: (val) =>

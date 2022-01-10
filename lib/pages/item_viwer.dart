@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
@@ -68,8 +69,7 @@ class _ItemViewerState extends State<ItemViewer> {
             child: ListTile(
               horizontalTitleGap: 5,
               minLeadingWidth: 20,
-              leading:
-                  Image.asset('$kIconsPath/wait.png', width: 23, height: 23),
+              leading: imageFromassets('wait.png', width: 23, height: 23),
               title: const Text(
                 'Waiting',
                 style: TextStyle(fontWeight: FontWeight.w600),
@@ -83,8 +83,7 @@ class _ItemViewerState extends State<ItemViewer> {
             child: ListTile(
               horizontalTitleGap: 5,
               minLeadingWidth: 25,
-              leading: Image.asset('$kIconsPath/calander.png',
-                  width: 20, height: 20),
+              leading: imageFromassets('calander.png', width: 20, height: 20),
               title: const Text('Scheduled',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               trailing: SizedBox(
@@ -108,8 +107,8 @@ class _ItemViewerState extends State<ItemViewer> {
                                     Log.verbose(mints);
                                   }));
                         },
-                        child: Image.asset('$kIconsPath/edit.png',
-                            width: 25, height: 25))
+                        child:
+                            imageFromassets('edit.png', width: 25, height: 25))
                   ],
                 ),
               ),
@@ -132,8 +131,7 @@ class _ItemViewerState extends State<ItemViewer> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Image.asset('$kIconsPath/${card[item]}',
-                              width: 34, height: 35),
+                          imageFromassets(card[item]!, width: 34, height: 35),
                           const SizedBox(height: 25),
                           Text(item,
                               style: TextStyle(
@@ -275,7 +273,7 @@ class _ItemViewerHeader extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back_ios,
                         color: kAppPrimaryColor)),
               ),
-              Image.asset('$kIconsPath/drivo_car_full.png',
+              imageFromassets('drivo_car_full.png',
                   width: 100, height: 40, fit: BoxFit.fitWidth),
             ],
           ),
@@ -305,8 +303,7 @@ class _ItemViewerHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(children: [
-                  Image.asset('$kIconsPath/car_side.png',
-                      width: 30, height: 30),
+                  imageFromassets('car_side.png', width: 30, height: 30),
                   const Text('Driving',
                           style: TextStyle(
                               color: kAppPrimaryColor,
@@ -324,13 +321,13 @@ class _ItemViewerHeader extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              Image.asset('$kIconsPath/car.png', width: 20, height: 20)
+              imageFromassets('car.png', width: 20, height: 20)
                   .paddingOnly(right: 7),
               const Flexible(
                 child: Text('Toyota Corolla Silver',
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
-              Image.asset('$kIconsPath/plate.png', width: 22, height: 22)
+              imageFromassets('plate.png', width: 22, height: 22)
                   .paddingOnly(left: 7, right: 7),
               const Text('LQR445',
                   style: TextStyle(fontWeight: FontWeight.bold)),

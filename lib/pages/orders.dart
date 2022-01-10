@@ -1,7 +1,7 @@
-import 'dart:ui';
-
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,7 +26,7 @@ class Orders extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: kToolbarHeight),
-                      Image.asset('$kIconsPath/drivo_car_full.png',
+                      imageFromassets('drivo_car_full.png',
                               width: 100, height: 40, fit: BoxFit.fitWidth)
                           .paddingOnly(left: 10),
                       const Text('Manage orders',
@@ -109,7 +109,9 @@ class _OrderTile extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Get.toNamed(OrderDetails.id);
+                      },
                       child: const Icon(Icons.arrow_forward_ios,
                           size: 18, color: kAppPrimaryColor)),
                 ],
@@ -122,7 +124,7 @@ class _OrderTile extends StatelessWidget {
             height: 70,
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.all(5),
-            child: Image.asset('$kIconsPath/papier.png'),
+            child: imageFromassets('papier.png'),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: kAppsecondryColor)));

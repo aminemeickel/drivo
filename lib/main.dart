@@ -33,7 +33,11 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: ItemViewer.id,
             page: () => const ItemViewer(),
-            curve: Curves.easeIn)
+            curve: Curves.easeIn),
+        GetPage(
+            name: OrderDetails.id,
+            page: () => const OrderDetails(),
+            curve: Curves.easeIn),
       ],
       theme: ThemeData(
           fontFamily: 'Montserrat',

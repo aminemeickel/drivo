@@ -1,3 +1,4 @@
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
@@ -24,8 +25,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           shadowColor: Colors.black.withOpacity(0.5),
           toolbarHeight: 70,
-          leading: Image.asset('$kIconsPath/drivo_car_full.png')
-              .paddingOnly(left: 10),
+          leading: imageFromassets('drivo_car_full.png').paddingOnly(left: 10),
           leadingWidth: 230,
           actions: [
             _AppBarButton(
@@ -142,7 +142,7 @@ class ItemTile extends StatelessWidget {
                   fontSize: 15),
             ),
             const Spacer(),
-            Image.asset('$kIconsPath/clock.png', width: 15, height: 15),
+            imageFromassets('clock.png', width: 15, height: 15),
             const Text(
               'just now',
               style: TextStyle(color: Color(0xFF392726)),
@@ -192,13 +192,13 @@ class ItemTile extends StatelessWidget {
         ).paddingOnly(top: 10, bottom: 5),
         Row(
           children: [
-            Image.asset('$kIconsPath/car.png', width: 20, height: 20)
+            imageFromassets('car.png', width: 20, height: 20)
                 .paddingOnly(right: 7),
             const Flexible(
               child: Text('Toyota Corolla Silver',
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            Image.asset('$kIconsPath/plate.png', width: 22, height: 22)
+            imageFromassets('plate.png', width: 22, height: 22)
                 .paddingOnly(left: 7, right: 7),
             const Text('LQR445', style: TextStyle(fontWeight: FontWeight.bold)),
           ],
