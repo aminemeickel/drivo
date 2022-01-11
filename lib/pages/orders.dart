@@ -1,11 +1,12 @@
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class Orders extends StatelessWidget {
+class Orders extends GetView<OrderController> {
   static const id = '/orders';
   const Orders({Key? key}) : super(key: key);
 

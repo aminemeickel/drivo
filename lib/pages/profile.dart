@@ -19,12 +19,20 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late StoreController storeController = Get.find();
   Store get store => storeController.store.value;
+  final _isEnabled = [false, false, false, false];
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (store.active!) {
+        _isEnabled[0] = true;
+      } else {
+        _isEnabled[1] = true;
+      }
+      _isEnabled[3] = true;
+    });
   }
 
-  bool isSlected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,16 +63,18 @@ class _ProfileState extends State<Profile> {
               imageFromassets('clock.png',
                   color: kAppPrimaryColor, width: 25, height: 25),
               const SizedBox(width: 10),
-              _boxTileBuilder(text: 'OPEN'),
-              _boxTileBuilder(text: 'CLOSE'),
+              _boxTileBuilder(text: 'OPEN', isEnabled: _isEnabled[0]),
+              _boxTileBuilder(text: 'CLOSE', isEnabled: _isEnabled[1]),
             ],
           ),
           const Divider(thickness: 1.1).paddingOnly(top: 10),
           _listTileBuilder(
-              iconName: 'location_store.png', text: 'Store Name'.toUpperCase()),
+              iconName: 'location_store.png',
+              text: '${store.storeName}'.toUpperCase()),
           const Divider(thickness: 1.1).paddingOnly(top: 10),
           _listTileBuilder(
-              iconName: 'location.png', text: 'full address'.toUpperCase()),
+              iconName: 'location.png',
+              text: '${store.fullAddress}'.toUpperCase()),
           const Divider(thickness: 1.1).paddingOnly(top: 10),
           _listTileBuilder(
               iconName: 'help.png',
@@ -78,8 +88,8 @@ class _ProfileState extends State<Profile> {
               imageFromassets('clock.png',
                   color: kAppPrimaryColor, width: 25, height: 25),
               const SizedBox(width: 10),
-              _boxTileBuilder(text: 'RU'),
-              _boxTileBuilder(text: 'EN'),
+              _boxTileBuilder(text: 'RU', isEnabled: _isEnabled[2]),
+              _boxTileBuilder(text: 'EN', isEnabled: _isEnabled[3]),
             ],
           ),
           const Divider(thickness: 1.1).paddingOnly(top: 10),
@@ -88,7 +98,7 @@ class _ProfileState extends State<Profile> {
             width: 110,
             child: IconButton(
                 onPressed: () {
-                  Get.delete<StoreController>(force: true);
+                  Get.deleteAll(force: true);
                   StorageDriver.clear();
                   Get.offAllNamed(Login.id);
                 },
@@ -105,7 +115,7 @@ class _ProfileState extends State<Profile> {
         ]));
   }
 
-  SizedBox _boxTileBuilder({required String text}) {
+  SizedBox _boxTileBuilder({required String text, required bool isEnabled}) {
     return SizedBox(
       height: 40,
       width: 110,
@@ -118,10 +128,10 @@ class _ProfileState extends State<Profile> {
           horizontalTitleGap: 0,
           child: CheckboxListTile(
             controlAffinity: ListTileControlAffinity.leading,
-            value: isSlected,
+            value: isEnabled,
             onChanged: (val) {
               setState(() {
-                isSlected = val!;
+                isEnabled = val!;
               });
             },
             contentPadding: EdgeInsets.zero,

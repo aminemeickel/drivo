@@ -44,7 +44,7 @@ class Order {
     return 'Order(lat: $lat, lng: $lng, discNominal: $discNominal, scheduleAt: $scheduleAt, orderNumber: $orderNumber, rating: $rating, comment: $comment, detailOrders: $detailOrders, transportation: $transportation, transportationModel: $transportationModel, colour: $colour, licensePlate: $licensePlate, pickupType: $pickupType, storeName: $storeName, buyer: $buyer, couponCode: $couponCode, couponName: $couponName)';
   }
 
-  factory Order.fromMap(Map<String, dynamic> data) => Order(
+  factory Order.fromJson(Map<String, dynamic> data) => Order(
         lat: data['lat'] as int?,
         lng: data['lng'] as int?,
         discNominal: data['disc_nominal'] as int?,
@@ -64,7 +64,7 @@ class Order {
         couponName: data['coupon_name'] as dynamic,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'lat': lat,
         'lng': lng,
         'disc_nominal': discNominal,
@@ -88,7 +88,7 @@ class Order {
     if (identical(other, this)) return true;
     if (other is! Order) return false;
     final mapEquals = const DeepCollectionEquality().equals;
-    return mapEquals(other.toMap(), toMap());
+    return mapEquals(other.toJson(), toJson());
   }
 
   @override

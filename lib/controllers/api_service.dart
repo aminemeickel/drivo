@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Models/store.dart';
 import 'package:drivo/Models/token.dart';
 import 'package:drivo/controllers/auth_controller.dart';
@@ -26,7 +27,6 @@ class ApiService {
     var client = await HTTPClient.getClient();
     try {
       var response = await client.get('/store');
-      Log.verbose(response.data['data']);
       if (response.statusCode! == 200) {
         return Store.fromJson(response.data['data']);
       }
@@ -35,7 +35,7 @@ class ApiService {
     }
   }
 
-  static Future<void> orders({int page = 1, String key = ''}) async {
+  static Future<List<Order>> orders({int page = 1, String key = ''}) async {
     var client = await HTTPClient.getClient();
     try {
       var response = await client.get('/store_app/orders', queryParameters: {
@@ -44,9 +44,17 @@ class ApiService {
         "status": "approved",
         "key": key
       });
-      Log.verbose(response.data);
+      if (response.statusCode == 200) {
+        return (response.data['data'] as List).map((json) {
+          var order = Order.fromJson(json);
+          Log.verbose(order.toJson());
+          return order;
+        }).toList();
+      }
+      return [];
     } on DioError catch (ex) {
       Log.error(ex.message);
+      return [];
     }
   }
 

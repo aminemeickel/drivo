@@ -1,11 +1,11 @@
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/api_service.dart';
-import 'package:drivo/controllers/auth_controller.dart';
+import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +21,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool listView = true;
   int position = 0;
+  var orderController = Get.find<OrderController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,13 +77,17 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           if (!listView) const LocationMap(),
-          Expanded(
-              child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: 20,
-            itemBuilder: (context, index) => const ItemTile(),
-            separatorBuilder: (context, index) => const Divider(),
-          )),
+          Obx(
+            () => Expanded(
+                child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: orderController.orders.length,
+              itemBuilder: (context, index) => ItemTile(
+                order: orderController.orders.elementAt(index),
+              ),
+              separatorBuilder: (context, index) => const Divider(),
+            )),
+          ),
           const SizedBox(height: 70)
         ],
       ),
@@ -128,8 +134,10 @@ class _AppBarButton extends StatelessWidget {
 }
 
 class ItemTile extends StatelessWidget {
+  final Order order;
   final String status;
-  const ItemTile({Key? key, this.status = 'Arrived'}) : super(key: key);
+  const ItemTile({Key? key, this.status = 'Arrived', required this.order})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -156,9 +164,9 @@ class ItemTile extends StatelessWidget {
         ),
         Row(
           children: [
-            const Text(
-              'Elizabeth B. -Order #44354',
-              style: TextStyle(color: Color(0xFF392726)),
+            Text(
+              '${order.buyer} -Order #${order.orderNumber}',
+              style: const TextStyle(color: Color(0xFF392726)),
             ).paddingOnly(top: 5),
             const Spacer(),
             Row(
