@@ -1,14 +1,15 @@
 class Token {
-  Token(
-      {required this.token,
-      required this.expiresIn,
-      required this.refreshExpiresIn,
-      required this.refreshToken});
+  Token({
+    required this.token,
+    required this.expiresIn,
+    required this.refreshExpiresIn,
+    required this.refreshToken,
+  }) : savedIn = DateTime.now().toString();
   String token;
   String expiresIn;
   String refreshToken;
   String refreshExpiresIn;
-
+  String savedIn;
   factory Token.fromJson(Map<String, dynamic> json) {
     return Token(
         token: json['token'],
@@ -21,7 +22,8 @@ class Token {
         'token': token,
         'token_expires_in': expiresIn,
         'refresh_token': refreshToken,
-        'refresh_token_expires_in': refreshExpiresIn
+        'refresh_token_expires_in': refreshExpiresIn,
+        'savedIn': savedIn
       };
   @override
   String toString() {

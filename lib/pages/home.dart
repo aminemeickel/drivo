@@ -67,7 +67,9 @@ class _HomePageState extends State<HomePage> {
         height: 65,
         child: MainButton(
           text: const Text('Add New', style: TextStyle(fontSize: 18)),
-          onpressd: () {},
+          onpressd: () async {
+            await ApiService.orders();
+          },
         ).paddingSymmetric(vertical: 10, horizontal: 15),
       ),
       body: Column(

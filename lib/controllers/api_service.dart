@@ -35,6 +35,21 @@ class ApiService {
     }
   }
 
+  static Future<void> orders({int page = 1, String key = ''}) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var response = await client.get('/store_app/orders', queryParameters: {
+        "page": page,
+        "pageLimit": 100,
+        "status": "approved",
+        "key": key
+      });
+      Log.verbose(response.data);
+    } on DioError catch (ex) {
+      Log.error(ex.message);
+    }
+  }
+
   static Future<Token> updateToken(String oldToken) async {
     var dio = Dio(BaseOptions(baseUrl: APILINK));
     var response =

@@ -21,11 +21,20 @@ dependencies:
   logger: ^1.1.0
   shared_preferences: ^2.0.11
   flutter_osm_plugin: ^0.28.0+1
+  firebase_core: ^1.11.0
+  firebase_messaging: ^11.2.5
 
 dev_dependencies:
   flutter_lints: ^1.0.0
+  change_app_package_name: ^1.0.0
+  flutter_launcher_icons: "^0.9.2"
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
 
 flutter:
   uses-material-design: true
