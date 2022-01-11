@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:drivo/controllers/auth_controller.dart';
+import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,8 +36,9 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     ///switching the page
-    Future.delayed(const Duration(seconds: 2, milliseconds: 300), () {
+    Future.delayed(const Duration(seconds: 2), () async {
       if (AuthController.isAuthnthicated) {
+        Get.put<StoreController>(StoreController(), permanent: true);
         Get.offNamed(HomePage.id);
       } else {
         Get.offNamed(Login.id);

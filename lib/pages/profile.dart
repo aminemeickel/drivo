@@ -1,6 +1,9 @@
+import 'package:drivo/Models/store.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +16,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  late StoreController storeController = Get.find();
+  Store get store => storeController.store.value;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   bool isSlected = false;
   @override
   Widget build(BuildContext context) {
@@ -34,7 +44,8 @@ class _ProfileState extends State<Profile> {
         bottomNavigationBar: const AppNavigationBar(position: 2),
         body: Column(children: [
           const SizedBox(height: 15),
-          _listTileBuilder(iconName: 'account.png', text: 'Jessica Smith'),
+          _listTileBuilder(
+              iconName: 'account.png', text: store.storeName ?? ''),
           const Divider(thickness: 1.1),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
