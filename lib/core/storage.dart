@@ -16,7 +16,7 @@ class StorageDriver {
     await _storage.remove(key);
   }
 
-  static void clear() async {
+  static Future<void> clear() async {
     await _storage.erase();
   }
 }

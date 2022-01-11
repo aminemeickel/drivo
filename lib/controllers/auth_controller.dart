@@ -15,4 +15,8 @@ class AuthController {
     var token = StorageDriver.read<String>(_tokenKey);
     if (token != null) return Token.fromJson(jsonDecode(token));
   }
+
+  static logOut() {
+    StorageDriver.clear();
+  }
 }

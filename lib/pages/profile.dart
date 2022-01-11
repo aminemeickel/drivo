@@ -3,6 +3,8 @@ import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/storage.dart';
+import 'package:drivo/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -85,7 +87,11 @@ class _ProfileState extends State<Profile> {
           SizedBox(
             width: 110,
             child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.delete<StoreController>(force: true);
+                  StorageDriver.clear();
+                  Get.offAllNamed(Login.id);
+                },
                 icon: Row(children: [
                   const Icon(Icons.exit_to_app, color: kAppPrimaryColor),
                   const Text('Log Out',
