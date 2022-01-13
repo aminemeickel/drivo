@@ -23,6 +23,7 @@ dependencies:
   flutter_osm_plugin: ^0.28.0+1
   firebase_core: ^1.11.0
   firebase_messaging: ^11.2.5
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0

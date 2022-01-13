@@ -82,7 +82,7 @@ class Store {
         countryId: json['country_id'] as String?,
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> get toJson => {
         'store_id': storeId,
         'user_id': userId,
         'store_name': storeName,
@@ -113,7 +113,7 @@ class Store {
     if (identical(other, this)) return true;
     if (other is! Store) return false;
     final mapEquals = const DeepCollectionEquality().equals;
-    return mapEquals(other.toJson(), toJson());
+    return mapEquals(other.toJson, toJson);
   }
 
   @override

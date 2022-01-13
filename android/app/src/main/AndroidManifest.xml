@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.drivo">
+    package="com.drivo.vendor">
    <application
         android:label="Drivo"
         android:name="${applicationName}"

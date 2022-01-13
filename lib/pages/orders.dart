@@ -1,3 +1,4 @@
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
@@ -52,40 +53,43 @@ class Orders extends GetView<OrderController> {
                           ])
                     ])),
             Expanded(
-              child: TabBarView(
-                  children: List.generate(
-                      4,
-                      (index) => ListView.separated(
-                          padding: const EdgeInsets.only(top: 10),
-                          itemCount: 20,
-                          shrinkWrap: true,
-                          separatorBuilder: (context, index) =>
-                              const Divider(thickness: 0.5),
-                          itemBuilder: (_, index) => const _OrderTile()))),
-            ),
+                child: TabBarView(children: [
+              _tabBuilder(controller.pending),
+              _tabBuilder(controller.ready),
+              _tabBuilder(controller.completed),
+              _tabBuilder(controller.cancelled),
+            ]))
           ])),
     );
   }
+
+  _tabBuilder(RxList<Order> orders) => ListView.separated(
+      padding: const EdgeInsets.only(top: 10),
+      itemCount: orders.length,
+      shrinkWrap: true,
+      separatorBuilder: (context, index) => const Divider(thickness: 0.5),
+      itemBuilder: (_, index) => _OrderTile(
+            order: orders.elementAt(index),
+          ));
 }
 
 class _OrderTile extends StatelessWidget {
-  const _OrderTile({
-    Key? key,
-  }) : super(key: key);
+  final Order order;
+  const _OrderTile({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: const Text('Justin Folley',
-            style: TextStyle(
+        title: Text('${order.buyer}',
+            style: const TextStyle(
                 color: Color(0xFF392726), fontWeight: FontWeight.w700)),
-        subtitle: const Text('Order #44354'),
+        subtitle: Text('Order #${order.orderNumber?.split('-').first}'),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text(
-              '\$14.90',
-              style: TextStyle(
+            Text(
+              '\$${order.netto}',
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: kAppPrimaryColor),
@@ -94,6 +98,7 @@ class _OrderTile extends StatelessWidget {
             SizedBox(
               width: 104,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -101,9 +106,9 @@ class _OrderTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10)),
                     padding:
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: const Text(
-                      'Curbside',
-                      style: TextStyle(
+                    child: Text(
+                      order.pickupType?.upper() ?? '',
+                      style: const TextStyle(
                           color: kAppPrimaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w600),
@@ -111,7 +116,7 @@ class _OrderTile extends StatelessWidget {
                   ),
                   InkWell(
                       onTap: () {
-                        Get.toNamed(OrderDetails.id);
+                        Get.toNamed(OrderDetails.id, arguments: order);
                       },
                       child: const Icon(Icons.arrow_forward_ios,
                           size: 18, color: kAppPrimaryColor)),

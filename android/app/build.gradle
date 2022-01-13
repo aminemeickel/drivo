@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "ru.drivo"
+        applicationId "com.drivo.vendor"
         minSdkVersion 22
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()

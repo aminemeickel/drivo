@@ -1,9 +1,7 @@
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
-import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
-import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/pages.dart';
@@ -58,22 +56,22 @@ class _HomePageState extends State<HomePage> {
                   bottomLeft: Radius.circular(7),
                   bottomRight: Radius.circular(7)))),
       bottomNavigationBar: const AppNavigationBar(),
-      bottomSheet: Container(
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 0.1)
-        ]),
-        width: Get.width,
-        height: 65,
-        child: MainButton(
-          text: const Text('Add New', style: TextStyle(fontSize: 18)),
-          onpressd: () async {
-            await ApiService.orders();
-          },
-        ).paddingSymmetric(vertical: 10, horizontal: 15),
-      ),
+      // bottomSheet: Container(
+      //   decoration: BoxDecoration(color: Colors.white, boxShadow: [
+      //     BoxShadow(
+      //         color: Colors.black.withOpacity(0.1),
+      //         blurRadius: 10,
+      //         spreadRadius: 0.1)
+      //   ]),
+      //   width: Get.width,
+      //   height: 65,
+      //   child: MainButton(
+      //     text: const Text('Add New', style: TextStyle(fontSize: 18)),
+      //     onpressd: () async {
+      //       await ApiService.orders();
+      //     },
+      //   ).paddingSymmetric(vertical: 10, horizontal: 15),
+      // ),
       body: Column(
         children: [
           if (!listView) const LocationMap(),

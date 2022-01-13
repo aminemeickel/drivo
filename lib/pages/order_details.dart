@@ -1,9 +1,11 @@
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class OrderDetails extends StatefulWidget {
   static const id = '/order/details';
@@ -22,6 +24,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   };
   @override
   Widget build(BuildContext context) {
+    Order? order = Get.arguments;
     return Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: const AppNavigationBar(position: 1),
@@ -42,23 +45,26 @@ class _OrderDetailsState extends State<OrderDetails> {
             ).paddingSymmetric(vertical: 9, horizontal: 10),
           ),
         ),
-        body: Column(children: [
-          const _OrderHeader(),
-          const SizedBox(height: 10),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Text('FOOD ITEMS',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
-          ).paddingOnly(left: 10, bottom: 10),
-          Expanded(
-              child: ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            padding: EdgeInsets.zero,
-            itemBuilder: (context, index) => const _OrderTile(),
-            itemCount: 20,
-          )),
-          const SizedBox(height: 70)
-        ]));
+        body: order == null
+            ? const Center(child: Text('No info!'))
+            : Column(children: [
+                _OrderHeader(order: order),
+                const SizedBox(height: 10),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('FOOD ITEMS',
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+                ).paddingOnly(left: 10, bottom: 10),
+                Expanded(
+                    child: ListView.separated(
+                  separatorBuilder: (context, index) => const Divider(),
+                  padding: EdgeInsets.zero,
+                  itemBuilder: (context, index) => const _OrderTile(),
+                  itemCount: 20,
+                )),
+                const SizedBox(height: 70)
+              ]));
   }
 }
 
@@ -102,7 +108,8 @@ class _OrderTile extends StatelessWidget {
 }
 
 class _OrderHeader extends StatelessWidget {
-  const _OrderHeader({Key? key}) : super(key: key);
+  final Order order;
+  const _OrderHeader({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -138,9 +145,9 @@ class _OrderHeader extends StatelessWidget {
                   border: Border.all(color: kAppPrimaryColor, width: 1.5),
                   borderRadius: BorderRadius.circular(10)),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: const Text(
-                'Curbside',
-                style: TextStyle(
+              child: Text(
+                order.pickupType.upper(),
+                style: const TextStyle(
                     color: kAppPrimaryColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600),
@@ -167,14 +174,14 @@ class _OrderHeader extends StatelessWidget {
             children: [
               imageFromassets('person.png', width: 20, height: 20)
                   .paddingOnly(left: 5, right: 7),
-              const Text('John Doe',
-                  style: TextStyle(fontWeight: FontWeight.w700)),
+              Text(order.buyer ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
               const Spacer(),
               imageFromassets('clock.png',
                   color: kAppPrimaryColor, height: 20, width: 20),
               const SizedBox(width: 5),
-              const Text('04:59 PM',
-                  style: TextStyle(fontWeight: FontWeight.w700))
+              Text(DateFormat.jm().format(DateTime.parse(order.createdAt!)),
+                  style: const TextStyle(fontWeight: FontWeight.w700))
             ],
           ),
           const SizedBox(height: 10),
@@ -182,8 +189,8 @@ class _OrderHeader extends StatelessWidget {
             children: [
               imageFromassets('store.png', width: 25, height: 25)
                   .paddingOnly(left: 0, right: 7),
-              const Text('Street 96, First Avenue',
-                  style: TextStyle(fontWeight: FontWeight.w700))
+              Text(order.disc?.toString() ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.w700))
             ],
           ),
           const SizedBox(height: 15)

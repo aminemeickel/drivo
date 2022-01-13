@@ -35,21 +35,21 @@ class ApiService {
     }
   }
 
-  static Future<List<Order>> orders({int page = 1, String key = ''}) async {
+  static Future<List<Order>> orders(
+      {int page = 1, String key = '', String? status = 'approved'}) async {
     var client = await HTTPClient.getClient();
     try {
       var response = await client.get('/store_app/orders', queryParameters: {
         "page": page,
         "pageLimit": 100,
-        "status": "approved",
+        "status": status,
         "key": key
       });
+      Log.info(response.data);
       if (response.statusCode == 200) {
-        return (response.data['data'] as List).map((json) {
-          var order = Order.fromJson(json);
-          Log.verbose(order.toJson());
-          return order;
-        }).toList();
+        return (response.data['data'] as List)
+            .map((orderJson) => Order.fromJson(orderJson))
+            .toList();
       }
       return [];
     } on DioError catch (ex) {
