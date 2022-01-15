@@ -1,0 +1,175 @@
+{
+  "project_info": {
+    "project_number": "137909363011",
+    "firebase_url": "https://drivo-23051-default-rtdb.firebaseio.com",
+    "project_id": "drivo-23051",
+    "storage_bucket": "drivo-23051.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137909363011:android:7e3ded4c19d32e7db4cff6",
+        "android_client_info": {
+          "package_name": "com.drivo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137909363011-g8npk9hor8adavj7rl7k3cbd10kgkjfg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drivo",
+            "certificate_hash": "b6e9231ca866944a15d0e1ad2406ee8bb6564127"
+          }
+        },
+        {
+          "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7ZoFDKo6Ejhc0kJmP76UVl40aSZXDL5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "137909363011-rupno15v7pgtbnbq5nkc66q6h7oqlq3b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.user.drivo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137909363011:android:91248282c4ebc854b4cff6",
+        "android_client_info": {
+          "package_name": "com.drivo.vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137909363011-61221dfcbad9cq736vl5g6tpvshvui1d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drivo.vendor",
+            "certificate_hash": "b1cd68ea60c6d2cacf9620ff8b41965b4a505c0f"
+          }
+        },
+        {
+          "client_id": "137909363011-kpcgfpkomcavb54vofjlj24f01put718.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drivo.vendor",
+            "certificate_hash": "9e88440f47da18b1f4fe73f85843ff4e1f6335a2"
+          }
+        },
+        {
+          "client_id": "137909363011-urvrqs3c24u424ppc5dmve91cg5qraer.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drivo.vendor",
+            "certificate_hash": "b6e9231ca866944a15d0e1ad2406ee8bb6564127"
+          }
+        },
+        {
+          "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7ZoFDKo6Ejhc0kJmP76UVl40aSZXDL5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "137909363011-rupno15v7pgtbnbq5nkc66q6h7oqlq3b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.user.drivo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137909363011:android:d3bb58f18f748bc3b4cff6",
+        "android_client_info": {
+          "package_name": "com.user.drivo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137909363011-11rergk3drc759e0j39252hlqk9ndj0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.user.drivo",
+            "certificate_hash": "ac20aa582562a4cbce40ac8ae2cce385afb92cea"
+          }
+        },
+        {
+          "client_id": "137909363011-hi7hqhg5oud4d5c5fhuooq5bae06t83c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.user.drivo",
+            "certificate_hash": "72bac9d46566f63dfbc260abcd984ae6fc8bd889"
+          }
+        },
+        {
+          "client_id": "137909363011-squafe5nb17nbv63c5qproah415e161g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.user.drivo",
+            "certificate_hash": "fd98e08623d64a277b4f0f60ab60b55b0245bed4"
+          }
+        },
+        {
+          "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7ZoFDKo6Ejhc0kJmP76UVl40aSZXDL5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137909363011-nkq6t4uq57qrnae5nthvuqhfc70pqvql.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "137909363011-rupno15v7pgtbnbq5nkc66q6h7oqlq3b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.user.drivo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

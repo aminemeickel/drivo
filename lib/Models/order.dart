@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:drivo/Models/detail_items.dart';
 
 class Order {
   String? orderId;
@@ -29,73 +30,77 @@ class Order {
   String? buyer;
   dynamic couponCode;
   dynamic couponName;
+  Iterable<DetailItem>? detailItem;
 
-  Order({
-    this.orderId,
-    this.userId,
-    this.storeId,
-    this.createdAt,
-    this.orderType,
-    this.coupon,
-    this.disc,
-    this.brutto,
-    this.netto,
-    this.payment,
-    this.status,
-    this.lat,
-    this.lng,
-    this.discNominal,
-    this.scheduleAt,
-    this.orderNumber,
-    this.rating,
-    this.comment,
-    this.detailOrders,
-    this.transportation,
-    this.transportationModel,
-    this.colour,
-    this.licensePlate,
-    this.pickupType,
-    this.storeName,
-    this.buyer,
-    this.couponCode,
-    this.couponName,
-  });
+  Order(
+      {this.orderId,
+      this.userId,
+      this.storeId,
+      this.createdAt,
+      this.orderType,
+      this.coupon,
+      this.disc,
+      this.brutto,
+      this.netto,
+      this.payment,
+      this.status,
+      this.lat,
+      this.lng,
+      this.discNominal,
+      this.scheduleAt,
+      this.orderNumber,
+      this.rating,
+      this.comment,
+      this.detailOrders,
+      this.transportation,
+      this.transportationModel,
+      this.colour,
+      this.licensePlate,
+      this.pickupType,
+      this.storeName,
+      this.buyer,
+      this.couponCode,
+      this.couponName,
+      this.detailItem});
 
   @override
   String toString() {
-    return 'Order(orderId: $orderId, userId: $userId, storeId: $storeId, createdAt: $createdAt, orderType: $orderType, coupon: $coupon, disc: $disc, brutto: $brutto, netto: $netto, payment: $payment, status: $status, lat: $lat, lng: $lng, discNominal: $discNominal, scheduleAt: $scheduleAt, orderNumber: $orderNumber, rating: $rating, comment: $comment, detailOrders: $detailOrders, transportation: $transportation, transportationModel: $transportationModel, colour: $colour, licensePlate: $licensePlate, pickupType: $pickupType, storeName: $storeName, buyer: $buyer, couponCode: $couponCode, couponName: $couponName)';
+    return 'Order(orderId: $orderId, userId: $userId, storeId: $storeId, createdAt: $createdAt, orderType: $orderType, coupon: $coupon, disc: $disc, brutto: $brutto, netto: $netto, payment: $payment, status: $status, lat: $lat, lng: $lng, discNominal: $discNominal, scheduleAt: $scheduleAt, orderNumber: $orderNumber, rating: $rating, comment: $comment, detailOrders: $detailOrders, transportation: $transportation, transportationModel: $transportationModel, colour: $colour, licensePlate: $licensePlate, pickupType: $pickupType, storeName: $storeName, buyer: $buyer, couponCode: $couponCode, couponName: $couponName items : $detailItem)';
   }
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
-        orderId: json['order_id'] as String?,
-        userId: json['user_id'] as String?,
-        storeId: json['store_id'] as String?,
-        createdAt: json['created_at'] as String?,
-        orderType: json['order_type'] as String?,
-        coupon: json['coupon'] as dynamic,
-        disc: json['disc'] as int?,
-        brutto: json['brutto'] as int?,
-        netto: json['netto'] as int?,
-        payment: json['payment'] as String?,
-        status: json['status'] as String?,
-        lat: json['lat'] as dynamic,
-        lng: json['lng'] as dynamic,
-        discNominal: json['disc_nominal'] as int?,
-        scheduleAt: json['schedule_at'] as String?,
-        orderNumber: json['order_number'] as String?,
-        rating: json['rating'] as int?,
-        comment: json['comment'] as dynamic,
-        detailOrders: json['detail_orders'] as dynamic,
-        transportation: json['transportation'] as String?,
-        transportationModel: json['transportation_model'] as String?,
-        colour: json['colour'] as String?,
-        licensePlate: json['license_plate'] as String?,
-        pickupType: json['pickup_type'] as String?,
-        storeName: json['store_name'] as String?,
-        buyer: json['buyer'] as String?,
-        couponCode: json['coupon_code'] as dynamic,
-        couponName: json['coupon_name'] as dynamic,
-      );
+      orderId: json['order_id'] as String?,
+      userId: json['user_id'] as String?,
+      storeId: json['store_id'] as String?,
+      createdAt: json['created_at'] as String?,
+      orderType: json['order_type'] as String?,
+      coupon: json['coupon'] as dynamic,
+      disc: json['disc'] as int?,
+      brutto: json['brutto'] as int?,
+      netto: json['netto'] as int?,
+      payment: json['payment'] as String?,
+      status: json['status'] as String?,
+      lat: json['lat'] as dynamic,
+      lng: json['lng'] as dynamic,
+      discNominal: json['disc_nominal'] as int?,
+      scheduleAt: json['schedule_at'] as String?,
+      orderNumber: json['order_number'] as String?,
+      rating: json['rating'] as int?,
+      comment: json['comment'] as dynamic,
+      detailOrders: json['detail_orders'] as dynamic,
+      transportation: json['transportation'] as String?,
+      transportationModel: json['transportation_model'] as String?,
+      colour: json['colour'] as String?,
+      licensePlate: json['license_plate'] as String?,
+      pickupType: json['pickup_type'] as String?,
+      storeName: json['store_name'] as String?,
+      buyer: json['buyer'] as String?,
+      couponCode: json['coupon_code'] as dynamic,
+      couponName: json['coupon_name'] as dynamic,
+      detailItem: json['detail_item'] != null
+          ? (json['detail_item'] as List)
+              .map((json) => DetailItem.fromJson(json))
+          : null);
 
   Map<String, dynamic> toJson() => {
         'order_id': orderId,
@@ -126,6 +131,7 @@ class Order {
         'buyer': buyer,
         'coupon_code': couponCode,
         'coupon_name': couponName,
+        'detail_item': detailItem?.map((e) => e.toJson()).toList()
       };
 
   @override

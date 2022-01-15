@@ -4,9 +4,11 @@ import 'package:drivo/component/location_map.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 
 class HomePage extends StatefulWidget {
   static const id = '/home';
@@ -20,6 +22,10 @@ class _HomePageState extends State<HomePage> {
   bool listView = true;
   int position = 0;
   var orderController = Get.find<OrderController>();
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,40 +62,55 @@ class _HomePageState extends State<HomePage> {
                   bottomLeft: Radius.circular(7),
                   bottomRight: Radius.circular(7)))),
       bottomNavigationBar: const AppNavigationBar(),
-      // bottomSheet: Container(
-      //   decoration: BoxDecoration(color: Colors.white, boxShadow: [
-      //     BoxShadow(
-      //         color: Colors.black.withOpacity(0.1),
-      //         blurRadius: 10,
-      //         spreadRadius: 0.1)
-      //   ]),
-      //   width: Get.width,
-      //   height: 65,
-      //   child: MainButton(
-      //     text: const Text('Add New', style: TextStyle(fontSize: 18)),
-      //     onpressd: () async {
-      //       await ApiService.orders();
-      //     },
-      //   ).paddingSymmetric(vertical: 10, horizontal: 15),
-      // ),
-      body: Column(
-        children: [
-          if (!listView) const LocationMap(),
-          Obx(
-            () => Expanded(
-                child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: orderController.orders.length,
-              itemBuilder: (context, index) => ItemTile(
-                order: orderController.orders.elementAt(index),
+      bottomSheet: null,
+      body: Obx(
+        () => orderController.isLoading.isTrue
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  if (!listView) const LocationMap(useOpenStreatMap: false),
+                  Obx(
+                    () => Expanded(
+                        child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: orderController.ready.length,
+                      itemBuilder: (context, index) => ItemTile(
+                        order: orderController.ready.elementAt(index),
+                      ),
+                      separatorBuilder: (context, index) => const Divider(),
+                    )),
+                  ),
+                ],
               ),
-              separatorBuilder: (context, index) => const Divider(),
-            )),
-          ),
-          const SizedBox(height: 70)
-        ],
       ),
     );
+  }
+
+  Future<dynamic> location() async {
+    Location location = Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return false;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return false;
+      }
+    }
+
+    _locationData = await location.getLocation();
+    return _locationData;
   }
 }
 

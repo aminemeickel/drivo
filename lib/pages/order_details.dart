@@ -1,8 +1,10 @@
+import 'package:drivo/Models/detail_items.dart';
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -17,14 +19,15 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   int mints = 0;
-  final card = {
-    'Phone': 'call_out.png',
-    'Details': 'documnt.png',
-    'Message': 'messages.png',
-  };
+  Order? order;
+  @override
+  void initState() {
+    super.initState();
+    order = Get.arguments;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Order? order = Get.arguments;
     return Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: const AppNavigationBar(position: 1),
@@ -45,10 +48,10 @@ class _OrderDetailsState extends State<OrderDetails> {
             ).paddingSymmetric(vertical: 9, horizontal: 10),
           ),
         ),
-        body: order == null
+        body: order == null && order?.detailItem != null
             ? const Center(child: Text('No info!'))
             : Column(children: [
-                _OrderHeader(order: order),
+                _OrderHeader(order: order!),
                 const SizedBox(height: 10),
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -60,8 +63,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                     child: ListView.separated(
                   separatorBuilder: (context, index) => const Divider(),
                   padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) => const _OrderTile(),
-                  itemCount: 20,
+                  itemBuilder: (context, index) => _OrderTile(
+                    detailItem: order!.detailItem!.elementAt(index),
+                  ),
+                  itemCount: order!.detailItem!.length,
                 )),
                 const SizedBox(height: 70)
               ]));
@@ -69,40 +74,48 @@ class _OrderDetailsState extends State<OrderDetails> {
 }
 
 class _OrderTile extends StatelessWidget {
-  const _OrderTile({
-    Key? key,
-  }) : super(key: key);
+  final DetailItem detailItem;
+  const _OrderTile({Key? key, required this.detailItem}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Checkbox(value: false, onChanged: (val) {}),
-        Image.asset('assets/dummyData/image 1.png', width: 70, height: 70),
-        const SizedBox(width: 10),
-        Flexible(
-          flex: 6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: 5),
-              Text('1x Chicken Cobb Salad',
-                  style: TextStyle(fontWeight: FontWeight.w800)),
-              SizedBox(height: 10),
-              Text('+ Tomatoes')
-            ],
+    return SizedBox(
+      width: Get.width,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Checkbox(value: false, onChanged: (val) {}),
+          Image.network(
+            detailItem.picture!,
+            width: 70,
+            height: 70,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.error),
           ),
-        ),
-        const Spacer(),
-        const Text(
-          '\$14.90',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: kAppPrimaryColor,
-              fontSize: 16),
-        ).paddingOnly(top: 8),
-      ],
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 5),
+                Text('${detailItem.qty}x ${detailItem.itemName}',
+                    style: const TextStyle(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 10),
+                if (detailItem.extras != null && detailItem.extras!.isNotEmpty)
+                  ...detailItem.extras!.map((e) => Text('+ ${e.name!}'))
+              ],
+            ),
+          ),
+          Text(
+            '\$${detailItem.netto}',
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: kAppPrimaryColor,
+                fontSize: 16),
+          ).paddingOnly(top: 8, right: 5),
+        ],
+      ),
     );
   }
 }
@@ -160,9 +173,9 @@ class _OrderHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: Row(children: [
-                  imageFromassets('car_side.png', width: 20, height: 20),
-                  const Text('Driving',
-                          style: TextStyle(
+                  getImage(order.transportation!),
+                  Text(order.transportation.upper(),
+                          style: const TextStyle(
                               color: kAppPrimaryColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w600))
@@ -184,18 +197,20 @@ class _OrderHeader extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.w700))
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              imageFromassets('store.png', width: 25, height: 25)
-                  .paddingOnly(left: 0, right: 7),
-              Text(order.disc?.toString() ?? '',
-                  style: const TextStyle(fontWeight: FontWeight.w700))
-            ],
-          ),
           const SizedBox(height: 15)
         ],
       ).marginSymmetric(horizontal: 8),
     );
+  }
+
+  Widget getImage(String transportation) {
+    switch (transportation) {
+      case 'VEHICLE':
+        return imageFromassets('car_side.png', width: 20, height: 20);
+      case 'BICYLE':
+        return imageFromassets('bike.png', width: 20, height: 20);
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

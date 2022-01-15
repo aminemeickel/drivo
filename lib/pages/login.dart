@@ -1,3 +1,4 @@
+import 'package:drivo/Utils/notification.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/controllers/api_service.dart';
@@ -123,6 +124,7 @@ class _LoginState extends State<Login> {
         var response = await ApiService.login(
             username: _mailController.text, password: _passwordController.text);
         if (response != null && response.statusCode == 200) {
+          await NotificationHandler().initFirebaseMessaging();
           AuthController.initControllers();
           Get.offAllNamed(HomePage.id);
         } else {

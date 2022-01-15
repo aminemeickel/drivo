@@ -1,10 +1,13 @@
 import 'package:drivo/Models/store.dart';
+import 'package:drivo/Utils/notification.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:drivo/core/storage.dart';
 import 'package:drivo/pages/login.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -51,68 +54,79 @@ class _ProfileState extends State<Profile> {
           leadingWidth: 100,
         ),
         bottomNavigationBar: const AppNavigationBar(position: 2),
-        body: Column(children: [
-          const SizedBox(height: 15),
-          _listTileBuilder(
-              iconName: 'account.png', text: store.storeName ?? ''),
-          const Divider(thickness: 1.1),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(width: 15),
-              imageFromassets('clock.png',
-                  color: kAppPrimaryColor, width: 25, height: 25),
-              const SizedBox(width: 10),
-              _boxTileBuilder(text: 'OPEN', isEnabled: _isEnabled[0]),
-              _boxTileBuilder(text: 'CLOSE', isEnabled: _isEnabled[1]),
-            ],
-          ),
-          const Divider(thickness: 1.1).paddingOnly(top: 10),
-          _listTileBuilder(
-              iconName: 'location_store.png',
-              text: '${store.storeName}'.toUpperCase()),
-          const Divider(thickness: 1.1).paddingOnly(top: 10),
-          _listTileBuilder(
-              iconName: 'location.png',
-              text: '${store.fullAddress}'.toUpperCase()),
-          const Divider(thickness: 1.1).paddingOnly(top: 10),
-          _listTileBuilder(
-              iconName: 'help.png',
-              text: 'Help & support'.toUpperCase(),
-              trailing: true),
-          const Divider(thickness: 1.1).paddingOnly(top: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(width: 15),
-              imageFromassets('clock.png',
-                  color: kAppPrimaryColor, width: 25, height: 25),
-              const SizedBox(width: 10),
-              _boxTileBuilder(text: 'RU', isEnabled: _isEnabled[2]),
-              _boxTileBuilder(text: 'EN', isEnabled: _isEnabled[3]),
-            ],
-          ),
-          const Divider(thickness: 1.1).paddingOnly(top: 10),
-          const Spacer(),
-          SizedBox(
-            width: 110,
-            child: IconButton(
-                onPressed: () {
-                  Get.deleteAll(force: true);
-                  StorageDriver.clear();
-                  Get.offAllNamed(Login.id);
-                },
-                icon: Row(children: [
-                  const Icon(Icons.exit_to_app, color: kAppPrimaryColor),
-                  const Text('Log Out',
-                          style: TextStyle(
-                              color: kAppPrimaryColor,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600))
-                      .paddingOnly(left: 5)
-                ])),
-          ).paddingOnly(bottom: 40)
-        ]));
+        body: Obx(
+          () => storeController.isLoading.isTrue
+              ? const Center(child: CircularProgressIndicator())
+              : Column(children: [
+                  const SizedBox(height: 15),
+                  _listTileBuilder(
+                      iconName: 'account.png', text: store.storeName ?? ''),
+                  const Divider(thickness: 1.1),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 15),
+                      imageFromassets('clock.png',
+                          color: kAppPrimaryColor, width: 25, height: 25),
+                      const SizedBox(width: 10),
+                      _boxTileBuilder(text: 'OPEN', isEnabled: _isEnabled[0]),
+                      _boxTileBuilder(text: 'CLOSE', isEnabled: _isEnabled[1]),
+                    ],
+                  ),
+                  const Divider(thickness: 1.1).paddingOnly(top: 10),
+                  _listTileBuilder(
+                      iconName: 'location_store.png',
+                      text: '${store.storeName}'.toUpperCase()),
+                  const Divider(thickness: 1.1).paddingOnly(top: 10),
+                  _listTileBuilder(
+                      iconName: 'location.png',
+                      text: '${store.fullAddress}'.toUpperCase()),
+                  const Divider(thickness: 1.1).paddingOnly(top: 10),
+                  _listTileBuilder(
+                      iconName: 'help.png',
+                      text: 'Help & support'.toUpperCase(),
+                      trailing: true),
+                  const Divider(thickness: 1.1).paddingOnly(top: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 15),
+                      imageFromassets('clock.png',
+                          color: kAppPrimaryColor, width: 25, height: 25),
+                      const SizedBox(width: 10),
+                      _boxTileBuilder(text: 'RU', isEnabled: _isEnabled[2]),
+                      _boxTileBuilder(text: 'EN', isEnabled: _isEnabled[3]),
+                    ],
+                  ),
+                  const Divider(thickness: 1.1).paddingOnly(top: 10),
+                  const Spacer(),
+                  SizedBox(
+                    width: 110,
+                    child: IconButton(
+                        onPressed: () {
+                          Get.deleteAll(force: true);
+                          StorageDriver.clear();
+                          Get.offAllNamed(Login.id);
+                        },
+                        icon: Row(children: [
+                          const Icon(Icons.exit_to_app,
+                              color: kAppPrimaryColor),
+                          const Text('Log Out',
+                                  style: TextStyle(
+                                      color: kAppPrimaryColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600))
+                              .paddingOnly(left: 5)
+                        ])),
+                  ).paddingOnly(bottom: 40),
+                  ElevatedButton(
+                      onPressed: () async {
+                        Log.verbose(
+                            await FirebaseMessaging.instance.getToken());
+                      },
+                      child: const Text('SHOW NOTIFICATION'))
+                ]),
+        ));
   }
 
   SizedBox _boxTileBuilder({required String text, required bool isEnabled}) {

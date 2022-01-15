@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drivo/Utils/notification.dart';
 import 'package:drivo/controllers/auth_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/pages.dart';
@@ -37,6 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () async {
       if (AuthController.isAuthnthicated) {
         AuthController.initControllers();
+        await NotificationHandler().initFirebaseMessaging();
         Get.offNamed(HomePage.id);
       } else {
         Get.offNamed(Login.id);

@@ -1,10 +1,12 @@
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class Orders extends GetView<OrderController> {
@@ -70,12 +72,15 @@ class Orders extends GetView<OrderController> {
       separatorBuilder: (context, index) => const Divider(thickness: 0.5),
       itemBuilder: (_, index) => _OrderTile(
             order: orders.elementAt(index),
+            isWorking: controller.isWorking,
           ));
 }
 
 class _OrderTile extends StatelessWidget {
   final Order order;
-  const _OrderTile({Key? key, required this.order}) : super(key: key);
+  final RxBool isWorking;
+  const _OrderTile({Key? key, required this.order, required this.isWorking})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -115,8 +120,18 @@ class _OrderTile extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                      onTap: () {
-                        Get.toNamed(OrderDetails.id, arguments: order);
+                      onTap: () async {
+                        if (isWorking.isTrue) return;
+                        isWorking(true);
+                        Order? selectedOrder =
+                            await ApiService.orderById(order.orderId);
+                        isWorking(false);
+                        if (selectedOrder != null) {
+                          Get.toNamed(OrderDetails.id,
+                              arguments: selectedOrder);
+                        } else {
+                          Fluttertoast.showToast(msg: 'Order Not found');
+                        }
                       },
                       child: const Icon(Icons.arrow_forward_ios,
                           size: 18, color: kAppPrimaryColor)),

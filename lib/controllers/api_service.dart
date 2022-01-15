@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Models/store.dart';
 import 'package:drivo/Models/token.dart';
+import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/controllers/auth_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/core/http_client.dart';
 import 'package:drivo/core/log.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ApiService {
   static Future<Response?> login(
@@ -16,6 +18,7 @@ class ApiService {
           data: {'username': username, 'password': password});
       if (response.statusCode == 200) {
         await AuthController.saveToken(Token.fromJson(response.data));
+        await updateFCMtoken(await FirebaseMessaging.instance.getToken());
         return response;
       }
     } on DioError catch (error) {
@@ -45,7 +48,6 @@ class ApiService {
         "status": status,
         "key": key
       });
-      Log.info(response.data);
       if (response.statusCode == 200) {
         return (response.data['data'] as List)
             .map((orderJson) => Order.fromJson(orderJson))
@@ -65,5 +67,33 @@ class ApiService {
     var token = Token.fromJson(response.data);
     await AuthController.saveToken(token);
     return token;
+  }
+
+  static Future<bool> updateFCMtoken(String? token) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var respose = await client.put('/user/fcm',
+          data: {'device_id': await getdeviceID(), 'token': token});
+      if (respose.statusCode == 200) {
+        return true;
+      }
+    } on DioError catch (e) {
+      Log.error(e.message);
+      return false;
+    }
+    return false;
+  }
+
+  static Future<Order?> orderById(String? orderId) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var respose = await client.get('/store_app/orders/id/$orderId');
+      if (respose.statusCode == 200) {
+        return Order.fromJson(respose.data['data']);
+      }
+    } on DioError catch (e) {
+      Log.error(e.message);
+      return null;
+    }
   }
 }
