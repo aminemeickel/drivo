@@ -23,7 +23,6 @@ class HTTPClient {
         onError: (err, handler) {
           Log.error(
               'error in ${err.requestOptions.uri} ${err.message} with respond of ${err.response}');
-          Log.error('You are using a token saved in ${token?.savedIn}');
           handler.next(err);
         },
       ));

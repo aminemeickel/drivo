@@ -1,5 +1,4 @@
 import 'package:drivo/Models/store.dart';
-import 'package:drivo/Utils/notification.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/store_controller.dart';
@@ -119,12 +118,12 @@ class _ProfileState extends State<Profile> {
                               .paddingOnly(left: 5)
                         ])),
                   ).paddingOnly(bottom: 40),
-                  ElevatedButton(
-                      onPressed: () async {
-                        Log.verbose(
-                            await FirebaseMessaging.instance.getToken());
-                      },
-                      child: const Text('SHOW NOTIFICATION'))
+                  // ElevatedButton(
+                  //     onPressed: () async {
+                  //       Log.verbose(
+                  //           await FirebaseMessaging.instance.getToken());
+                  //     },
+                  //     child: const Text('SHOW NOTIFICATION'))
                 ]),
         ));
   }

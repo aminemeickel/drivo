@@ -96,4 +96,17 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<bool> updateOrderStatus(
+      String orderId, String orderStatus) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var respose = await client
+          .put('/store_app/orders/$orderId', data: {'status': orderStatus});
+      return respose.statusCode == 200;
+    } on DioError catch (e) {
+      Log.error(e.message);
+      return false;
+    }
+  }
 }

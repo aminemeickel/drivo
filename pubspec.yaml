@@ -23,6 +23,7 @@ dependencies:
   get_storage: ^2.0.3
   google_fonts: ^2.2.0
   google_maps_flutter: ^2.1.1
+  http: ^0.13.4
   intl: ^0.17.0
   jwt_decoder: ^2.0.1
   location: ^4.3.0
@@ -47,13 +48,13 @@ flutter:
     - assets/
     - assets/splashScreen/
     - assets/icons/
-    - assets/dummyData/
   fonts:
-    - family: Montserrat
+    - family: GothamPro
       fonts:
-        - asset: assets/fonts/Montserrat-Bold.ttf
+        - asset: assets/fonts/Gotham/GothamPro-Medium.ttf
+        - asset: assets/fonts/Gotham/GothamPro-Light.ttf
+        - asset: assets/fonts/Gotham/GothamPro-Black.ttf
+        - asset: assets/fonts/Gotham/GothamPro-BlackItalic.ttf
+        - asset: assets/fonts/Gotham/GothamPro-Italic.ttf
+        - asset: assets/fonts/Gotham/GothamPro.ttf
           weight: 900
-        - asset: assets/fonts/Montserrat-Italic.ttf
-        - asset: assets/fonts/Montserrat-Light.ttf
-        - asset: assets/fonts/Montserrat-Medium.ttf
-        - asset: assets/fonts/Montserrat-Regular.ttf

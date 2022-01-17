@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:get/get.dart';
 
 class DetailItem {
   String? id;
@@ -10,6 +11,7 @@ class DetailItem {
   String? picture;
   dynamic itemDetail;
   List<Extra>? extras;
+  RxBool isSlected = true.obs;
 
   DetailItem({
     this.id,

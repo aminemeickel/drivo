@@ -33,9 +33,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.black.withOpacity(0.5),
-          toolbarHeight: 70,
-          leading: imageFromassets('drivo_car_full.png').paddingOnly(left: 10),
-          leadingWidth: 230,
+          toolbarHeight: 65,
+          leading: imageFromassets('logo_red.png',
+                  width: 20, height: 20, fit: BoxFit.fitWidth)
+              .paddingOnly(left: 10),
+          leadingWidth: 100,
           actions: [
             _AppBarButton(
                 text: 'List View',
@@ -73,9 +75,9 @@ class _HomePageState extends State<HomePage> {
                     () => Expanded(
                         child: ListView.separated(
                       shrinkWrap: true,
-                      itemCount: orderController.ready.length,
+                      itemCount: orderController.orders.length,
                       itemBuilder: (context, index) => ItemTile(
-                        order: orderController.ready.elementAt(index),
+                        order: orderController.orders.elementAt(index),
                       ),
                       separatorBuilder: (context, index) => const Divider(),
                     )),

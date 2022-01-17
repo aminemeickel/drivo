@@ -3,9 +3,12 @@ import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/api_service.dart';
+import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +23,8 @@ class OrderDetails extends StatefulWidget {
 class _OrderDetailsState extends State<OrderDetails> {
   int mints = 0;
   Order? order;
+  RxBool updating = false.obs;
+  RxBool cancel = false.obs;
   @override
   void initState() {
     super.initState();
@@ -28,27 +33,90 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   Widget build(BuildContext context) {
+    var orderStatus = order!.status!.toLowerCase();
     return Scaffold(
         backgroundColor: Colors.white,
         bottomNavigationBar: const AppNavigationBar(position: 1),
-        bottomSheet: Container(
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                spreadRadius: 0.1)
-          ]),
-          width: Get.width,
-          child: SizedBox(
-            width: Get.width * .9,
-            height: 60,
-            child: MainButton(
-              text: const Text('Mark as Ready', style: TextStyle(fontSize: 18)),
-              onpressd: () {},
-            ).paddingSymmetric(vertical: 9, horizontal: 10),
-          ),
-        ),
-        body: order == null && order?.detailItem != null
+        bottomSheet: order != null &&
+                orderStatus != 'canceled' &&
+                orderStatus != 'completed'
+            ? Container(
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      spreadRadius: 0.1)
+                ]),
+                width: Get.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (orderStatus == 'approved')
+                      SizedBox(
+                        width: Get.width / 2,
+                        height: 60,
+                        child: MainButtonSecondary(
+                          text: Obx(() => Text(
+                              cancel.isTrue ? 'Updating...' : 'Cancel',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: kAppPrimaryColor,
+                                  fontWeight: FontWeight.w600))),
+                          onpressd: () async {
+                            if (updating.isTrue || cancel.isTrue) return;
+                            cancel(true);
+                            var response = await ApiService.updateOrderStatus(
+                                order!.orderId!, 'canceled');
+                            if (response) {
+                              await Get.find<OrderController>().onReady();
+                              cancel(false);
+                              Get.back();
+                              Fluttertoast.showToast(msg: 'Order canceld!');
+                              return;
+                            }
+                            cancel(false);
+                            Fluttertoast.showToast(
+                                msg: 'Error please try again!');
+                          },
+                        ).paddingSymmetric(vertical: 9, horizontal: 10),
+                      ),
+                    SizedBox(
+                      width: order!.status!.toLowerCase() == 'approved'
+                          ? (Get.width / 2)
+                          : Get.width * .9,
+                      height: 60,
+                      child: MainButton(
+                        text: Obx(() => Text(
+                            updating.isTrue
+                                ? 'Updating..'
+                                : 'Mark as ${order!.status!.toLowerCase() == 'approved' ? 'Ready' : 'Completed'}',
+                            style: const TextStyle(fontSize: 18))),
+                        onpressd: () async {
+                          if (updating.isTrue) return;
+                          updating(true);
+                          var response = await ApiService.updateOrderStatus(
+                              order!.orderId!,
+                              orderStatus == 'approved'
+                                  ? 'delivery'
+                                  : 'completed');
+                          if (response) {
+                            await Get.find<OrderController>().onReady();
+                            updating(false);
+                            Get.back();
+                            Fluttertoast.showToast(msg: 'Status Updated');
+                            return;
+                          }
+                          updating(false);
+                          Fluttertoast.showToast(
+                              msg: 'Error please try again!');
+                        },
+                      ).paddingSymmetric(vertical: 9, horizontal: 10),
+                    ),
+                  ],
+                ),
+              )
+            : null,
+        body: order == null
             ? const Center(child: Text('No info!'))
             : Column(children: [
                 _OrderHeader(order: order!),
@@ -61,61 +129,59 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ).paddingOnly(left: 10, bottom: 10),
                 Expanded(
                     child: ListView.separated(
-                  separatorBuilder: (context, index) => const Divider(),
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) => _OrderTile(
-                    detailItem: order!.detailItem!.elementAt(index),
-                  ),
-                  itemCount: order!.detailItem!.length,
-                )),
+                        separatorBuilder: (context, index) => const Divider(),
+                        padding: EdgeInsets.zero,
+                        itemCount: order!.detailItem!.length,
+                        itemBuilder: (context, index) => _OrderTile(
+                            detailItem: order!.detailItem!.elementAt(index)))),
                 const SizedBox(height: 70)
               ]));
+  }
+
+  getButtonText() {
+    if (order != null) {
+      switch (order!.status) {
+        case 'approved':
+          return {'Cancel': 'Mark as Ready'};
+      }
+    }
   }
 }
 
 class _OrderTile extends StatelessWidget {
   final DetailItem detailItem;
+
   const _OrderTile({Key? key, required this.detailItem}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Get.width,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Checkbox(value: false, onChanged: (val) {}),
-          Image.network(
-            detailItem.picture!,
-            width: 70,
-            height: 70,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.network(detailItem.picture!,
+            width: 80,
+            height: 100,
+            fit: BoxFit.fitHeight,
             errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.error),
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 5),
-                Text('${detailItem.qty}x ${detailItem.itemName}',
-                    style: const TextStyle(fontWeight: FontWeight.w800)),
-                const SizedBox(height: 10),
-                if (detailItem.extras != null && detailItem.extras!.isNotEmpty)
-                  ...detailItem.extras!.map((e) => Text('+ ${e.name!}'))
-              ],
-            ),
-          ),
-          Text(
-            '\$${detailItem.netto}',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: kAppPrimaryColor,
-                fontSize: 16),
-          ).paddingOnly(top: 8, right: 5),
-        ],
-      ),
+                const Icon(Icons.error)).paddingOnly(left: 10, right: 15),
+        Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const SizedBox(height: 5),
+          Text('${detailItem.qty}x ${detailItem.itemName}',
+              style: const TextStyle(fontWeight: FontWeight.w800)),
+          const SizedBox(height: 10),
+          if (detailItem.extras != null && detailItem.extras!.isNotEmpty)
+            ...detailItem.extras!.map((e) => Text('+ ${e.name!}'))
+        ])),
+        Text(
+          '₽${detailItem.netto}',
+          style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: kAppPrimaryColor,
+              fontSize: 16),
+        ).paddingOnly(top: 8, right: 10)
+      ],
     );
   }
 }
@@ -144,8 +210,8 @@ class _OrderHeader extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back_ios,
                         color: kAppPrimaryColor)),
               ),
-              imageFromassets('drivo_car_full.png',
-                  width: 100, height: 40, fit: BoxFit.fitWidth),
+              imageFromassets('logo_red.png',
+                  width: 80, height: 40, fit: BoxFit.fitWidth),
             ],
           ),
           const Divider(thickness: 1.5),
@@ -203,12 +269,15 @@ class _OrderHeader extends StatelessWidget {
     );
   }
 
+  //it can be better
   Widget getImage(String transportation) {
     switch (transportation) {
       case 'VEHICLE':
         return imageFromassets('car_side.png', width: 20, height: 20);
       case 'BICYLE':
         return imageFromassets('bike.png', width: 20, height: 20);
+      case 'WALKING':
+        return imageFromassets('walk.png', width: 20, height: 20);
       default:
         return const SizedBox.shrink();
     }

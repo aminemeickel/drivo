@@ -11,10 +11,11 @@ class OrderController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isWorking = false.obs;
   @override
-  void onReady() async {
+  Future<void> onReady() async {
     isLoading(true);
-    pending(await ApiService.orders(status: 'pending payment'));
-    ready(await ApiService.orders(status: 'approved'));
+    orders(await ApiService.orders(status: null));
+    pending(await ApiService.orders(status: 'approved'));
+    ready(await ApiService.orders(status: 'delivery'));
     completed(await ApiService.orders(status: 'completed'));
     cancelled(await ApiService.orders(status: 'canceled'));
     isLoading(false);

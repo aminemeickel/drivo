@@ -30,8 +30,8 @@ class Orders extends GetView<OrderController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: kToolbarHeight),
-                      imageFromassets('drivo_car_full.png',
-                              width: 100, height: 40, fit: BoxFit.fitWidth)
+                      imageFromassets('logo_red.png',
+                              width: 90, height: 40, fit: BoxFit.fitWidth)
                           .paddingOnly(left: 10),
                       const Text('Manage orders',
                               style: TextStyle(
@@ -46,7 +46,7 @@ class Orders extends GetView<OrderController> {
                           indicatorSize: TabBarIndicatorSize.label,
                           labelStyle: const TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontFamily: 'Montserrat'),
+                              fontFamily: 'GothamPro'),
                           tabs: [
                             Tab(text: 'pending'.toUpperCase()),
                             Tab(text: 'ready'.toUpperCase()),
@@ -55,12 +55,14 @@ class Orders extends GetView<OrderController> {
                           ])
                     ])),
             Expanded(
-                child: TabBarView(children: [
-              _tabBuilder(controller.pending),
-              _tabBuilder(controller.ready),
-              _tabBuilder(controller.completed),
-              _tabBuilder(controller.cancelled),
-            ]))
+                child: Obx(
+              () => TabBarView(children: [
+                _tabBuilder(controller.pending),
+                _tabBuilder(controller.ready),
+                _tabBuilder(controller.completed),
+                _tabBuilder(controller.cancelled),
+              ]),
+            ))
           ])),
     );
   }
@@ -93,7 +95,7 @@ class _OrderTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '\$${order.netto}',
+              '₽ ${order.netto}',
               style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
