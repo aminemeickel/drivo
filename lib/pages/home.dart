@@ -79,9 +79,9 @@ class _HomePageState extends State<HomePage> {
                     () => Expanded(
                         child: ListView.separated(
                       shrinkWrap: true,
-                      itemCount: orderController.orders.length,
+                      itemCount: orderController.ready.length,
                       itemBuilder: (context, index) => ItemTile(
-                          order: orderController.orders.elementAt(index),
+                          order: orderController.ready.elementAt(index),
                           storeLocation: storeLocation),
                       separatorBuilder: (context, index) => const Divider(),
                     )),

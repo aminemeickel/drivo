@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 int _selectedMins = 0;
@@ -111,7 +112,8 @@ class _ItemViewerState extends State<ItemViewer> {
                 'Waiting',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              trailing: const Text('1 mins'),
+              trailing: Text(
+                  '${DateTime.now().difference(DateTime.parse(order!.scheduleAt!)).inMinutes} mins'),
             ),
           ),
           const Divider(thickness: 1.1).paddingSymmetric(horizontal: 15),
@@ -127,7 +129,8 @@ class _ItemViewerState extends State<ItemViewer> {
                 width: 88,
                 child: Row(
                   children: [
-                    const Text('4:55 pm'),
+                    Text(DateFormat.jm()
+                        .format(DateTime.parse(order!.scheduleAt!))),
                     const SizedBox(width: 5),
                     InkWell(
                         onTap: () {
@@ -330,7 +333,7 @@ class _ItemViewerHeader extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 30,
+                width: 20,
                 height: 40,
                 child: IconButton(
                     onPressed: () => Get.back(),
@@ -338,12 +341,13 @@ class _ItemViewerHeader extends StatelessWidget {
                         color: kAppPrimaryColor)),
               ),
               imageFromassets('logo_red.png',
-                  width: 80, height: 40, fit: BoxFit.fitWidth),
+                      width: 80, height: 40, fit: BoxFit.fitWidth)
+                  .paddingOnly(left: 10),
             ],
           ),
           const Divider(thickness: 1.5),
           Row(children: [
-            const Text('1 customer has arrived',
+            const Text('customer has arrived',
                 style: TextStyle(
                     color: kAppPrimaryColor, fontWeight: FontWeight.w600)),
             const Spacer(),
