@@ -5,10 +5,12 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class HomePage extends StatefulWidget {
   static const id = '/home';
@@ -138,83 +140,78 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              _orderStatus == OrderStatus.Transit
-                  ? 'In Transit'
-                  : _orderStatus.name,
-              style: TextStyle(
-                  color: _statusColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
-            ),
-            const Spacer(),
-            imageFromassets('clock.png', width: 15, height: 15),
-            const Text(
-              'just now',
-              style: TextStyle(color: Color(0xFF392726)),
-            ).paddingOnly(left: 10)
-          ],
-        ),
-        Row(
-          children: [
-            Text(
-              '${order.buyer.upper()} -Order #${order.orderNumber!.replaceAll('-', '')}',
-              style: const TextStyle(color: Color(0xFF392726)),
-            ).paddingOnly(top: 5),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: kAppPrimaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  child: Text(order.pickupType.upper(),
-                      style: const TextStyle(
-                          color: kAppPrimaryColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600)),
-                ),
-                SizedBox(
-                  width: 30,
-                  height: 20,
-                  child: IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 20,
-                      onPressed: () {
-                        Get.toNamed(ItemViewer.id);
-                      },
-                      icon: const Icon(Icons.arrow_forward_ios,
-                          color: kAppPrimaryColor, size: 20)),
-                )
-              ],
-            ),
-          ],
-        ).paddingOnly(top: 10, bottom: 5),
-        Row(
-          children: [
-            imageFromassets('car.png', width: 20, height: 20)
-                .paddingOnly(right: 7),
-            const Flexible(
-              child: Text('Toyota Corolla Silver',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            imageFromassets('plate.png', width: 22, height: 22)
-                .paddingOnly(left: 7, right: 7),
-            const Text('LQR445', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ).paddingOnly(top: 3),
-      ],
-    ).paddingSymmetric(horizontal: 10, vertical: 8);
+    return InkWell(
+      onTap: () {
+        Get.toNamed(ItemViewer.id, arguments: order);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                _orderStatus == OrderStatus.Transit
+                    ? 'In Transit'
+                    : _orderStatus.name,
+                style: TextStyle(
+                    color: _statusColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
+              ),
+              const Spacer(),
+              imageFromassets('clock.png', width: 15, height: 15),
+              Text(
+                timeago.format(DateTime.parse(order.scheduleAt!)),
+                style: const TextStyle(color: Color(0xFF392726)),
+              ).paddingOnly(left: 5)
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                '${order.buyer.upper()} -Order #${order.orderNumber!.replaceAll('-', '')}',
+                style: const TextStyle(color: Color(0xFF392726)),
+              ).paddingOnly(top: 5),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: kAppPrimaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10)),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    child: Text(order.pickupType.upper(),
+                        style: const TextStyle(
+                            color: kAppPrimaryColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  SizedBox(
+                    width: 30,
+                    height: 20,
+                    child: IconButton(
+                        padding: EdgeInsets.zero,
+                        iconSize: 20,
+                        onPressed: () {
+                          Get.toNamed(ItemViewer.id, arguments: order);
+                        },
+                        icon: const Icon(Icons.arrow_forward_ios,
+                            color: kAppPrimaryColor, size: 20)),
+                  )
+                ],
+              ),
+            ],
+          ).paddingOnly(top: 10, bottom: 5),
+          Row(
+            children: getRow(),
+          ),
+        ],
+      ).paddingSymmetric(horizontal: 10, vertical: 8),
+    );
   }
 
   OrderStatus get _orderStatus {
@@ -238,4 +235,48 @@ class ItemTile extends StatelessWidget {
   }
 
   String get timeState => '';
+
+  List<Widget> getRow() {
+    switch (_orderStatus) {
+      case OrderStatus.Arrived:
+        return [
+          imageFromassets(getImage(), width: 20, height: 20)
+              .paddingOnly(right: 7),
+          Flexible(
+            child: Text(
+                order.transportation == 'VEHICLE'
+                    ? order.transportationModel.upper()
+                    : order.transportation.upper(),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          if (order.transportation == 'VEHICLE' && order.colour != null)
+            Flexible(child: Text(order.colour.upper()).paddingOnly(left: 3)),
+          if (order.licensePlate != null && order.licensePlate!.isNotEmpty)
+            imageFromassets('plate.png', width: 22, height: 22)
+                .paddingOnly(left: 7, right: 7),
+          Text(order.licensePlate!,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+        ];
+
+      case OrderStatus.Approaching:
+      case OrderStatus.Transit:
+        return [
+          imageFromassets('call.png', width: 22, height: 22),
+          Text('(408)-${order.orderNumber!}').paddingOnly(left: 10, top: 5)
+        ];
+    }
+  }
+
+  String getImage() {
+    switch (order.transportation) {
+      case 'VEHICLE':
+        return 'car_side.png';
+      case 'BICYLE':
+        return 'bike.png';
+      case 'WALKING':
+        return 'walk.png';
+      default:
+        return 'woman.png';
+    }
+  }
 }

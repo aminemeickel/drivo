@@ -6,7 +6,6 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -250,7 +249,8 @@ class _OrderHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: Row(children: [
-                  getImage(order.transportation!),
+                  imageFromassets(getImage(), width: 20, height: 20)
+                      .paddingOnly(right: 7),
                   Text(order.transportation.upper(),
                           style: const TextStyle(
                               color: kAppPrimaryColor,
@@ -280,17 +280,16 @@ class _OrderHeader extends StatelessWidget {
     );
   }
 
-  //it can be better
-  Widget getImage(String transportation) {
-    switch (transportation) {
+  String getImage() {
+    switch (order.transportation) {
       case 'VEHICLE':
-        return imageFromassets('car_side.png', width: 20, height: 20);
+        return 'car_side.png';
       case 'BICYLE':
-        return imageFromassets('bike.png', width: 20, height: 20);
+        return 'bike.png';
       case 'WALKING':
-        return imageFromassets('walk.png', width: 20, height: 20);
+        return 'walk.png';
       default:
-        return const SizedBox.shrink();
+        return 'woman.png';
     }
   }
 }

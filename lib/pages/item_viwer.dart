@@ -1,12 +1,18 @@
 import 'dart:ui';
 
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/api_service.dart';
+import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/pages/order_details.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 int _selectedMins = 0;
 
@@ -23,47 +29,78 @@ class _ItemViewerState extends State<ItemViewer> {
     'Phone': 'call_out.png',
     'Details': 'documnt.png',
   };
+  final RxBool _updating = false.obs;
+  final RxBool _fatching = false.obs;
+  Order? order;
+  @override
+  void initState() {
+    order = Get.arguments;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: const AppNavigationBar(),
-      bottomSheet: Container(
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 0.1)
-        ]),
-        width: Get.width,
-        child: Row(
-          children: [
-            SizedBox(
-              width: Get.width / 2,
-              height: 60,
-              child: MainButtonSecondary(
-                text: const Text('Cancel',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: kAppPrimaryColor,
-                        fontWeight: FontWeight.w600)),
-                onpressd: () {},
-              ).paddingSymmetric(vertical: 9, horizontal: 10),
+      bottomSheet: order == null
+          ? null
+          : Container(
+              decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 0.1)
+              ]),
+              width: Get.width,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: Get.width / 2,
+                    height: 60,
+                    child: MainButtonSecondary(
+                      text: const Text('Cancel',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: kAppPrimaryColor,
+                              fontWeight: FontWeight.w600)),
+                      onpressd: () {
+                        Get.back();
+                      },
+                    ).paddingSymmetric(vertical: 9, horizontal: 10),
+                  ),
+                  SizedBox(
+                    width: Get.width / 2,
+                    height: 60,
+                    child: MainButton(
+                        text: Obx(
+                          () => Text(
+                              _updating.isTrue ? 'Updating...' : 'Complete',
+                              style: const TextStyle(fontSize: 18)),
+                        ),
+                        onpressd: () async {
+                          if (_updating.isTrue) return;
+                          _updating(true);
+                          var response = await ApiService.updateOrderStatus(
+                              order!.orderId!, 'completed');
+                          if (response) {
+                            await Get.find<OrderController>().onReady();
+                            _updating(false);
+                            Get.back();
+                            Fluttertoast.showToast(msg: 'Status Updated');
+                            return;
+                          }
+                          _updating(false);
+                          Fluttertoast.showToast(
+                              msg: 'Error please try again!');
+                        }).paddingSymmetric(vertical: 9, horizontal: 10),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(
-              width: Get.width / 2,
-              height: 60,
-              child: MainButton(
-                text: const Text('Complete', style: TextStyle(fontSize: 18)),
-                onpressd: () {},
-              ).paddingSymmetric(vertical: 9, horizontal: 10),
-            ),
-          ],
-        ),
-      ),
       body: Column(
         children: [
-          const _ItemViewerHeader(),
+          _ItemViewerHeader(order: order!),
           SizedBox(
             height: 40,
             child: ListTile(
@@ -114,7 +151,13 @@ class _ItemViewerState extends State<ItemViewer> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: card.keys
                 .map((item) => GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        if (item == 'Details') {
+                          await openOrder();
+                          return;
+                        }
+                        callNumber();
+                      },
                       child: Container(
                         width: Get.width / 3.5,
                         height: 130,
@@ -146,6 +189,26 @@ class _ItemViewerState extends State<ItemViewer> {
         ],
       ),
     );
+  }
+
+  Future<void> openOrder() async {
+    _fatching(true);
+    Order? selectedOrder = await ApiService.orderById(order!.orderId);
+    _fatching(false);
+    if (selectedOrder != null) {
+      Get.toNamed(OrderDetails.id, arguments: selectedOrder);
+    } else {
+      _fatching(false);
+      Fluttertoast.showToast(msg: 'Order Not found');
+    }
+  }
+
+  void callNumber() async {
+    try {
+      await launch('tel:+408${order?.orderNumber!.replaceAll('-', '')}');
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Can't Open Phone Caller");
+    }
   }
 }
 
@@ -250,7 +313,8 @@ class _BottomSheetModelState extends State<BottomSheetModel> {
 }
 
 class _ItemViewerHeader extends StatelessWidget {
-  const _ItemViewerHeader({Key? key}) : super(key: key);
+  final Order order;
+  const _ItemViewerHeader({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -267,13 +331,14 @@ class _ItemViewerHeader extends StatelessWidget {
             children: [
               SizedBox(
                 width: 30,
+                height: 40,
                 child: IconButton(
                     onPressed: () => Get.back(),
                     icon: const Icon(Icons.arrow_back_ios,
                         color: kAppPrimaryColor)),
               ),
               imageFromassets('logo_red.png',
-                  width: 90, height: 40, fit: BoxFit.fitWidth),
+                  width: 80, height: 40, fit: BoxFit.fitWidth),
             ],
           ),
           const Divider(thickness: 1.5),
@@ -283,18 +348,16 @@ class _ItemViewerHeader extends StatelessWidget {
                     color: kAppPrimaryColor, fontWeight: FontWeight.w600)),
             const Spacer(),
             Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: kAppPrimaryColor, width: 1.5),
-                  borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: const Text(
-                'Curbside',
-                style: TextStyle(
-                    color: kAppPrimaryColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
+                decoration: BoxDecoration(
+                    border: Border.all(color: kAppPrimaryColor, width: 1.5),
+                    borderRadius: BorderRadius.circular(10)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Text(order.pickupType.upper(),
+                    style: const TextStyle(
+                        color: kAppPrimaryColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600))),
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: 7),
                 decoration: BoxDecoration(
@@ -302,9 +365,9 @@ class _ItemViewerHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(children: [
-                  imageFromassets('car_side.png', width: 30, height: 30),
-                  const Text('Driving',
-                          style: TextStyle(
+                  imageFromassets(getImage(), width: 23, height: 23),
+                  Text(order.transportation.upper(),
+                          style: const TextStyle(
                               color: kAppPrimaryColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w600))
@@ -312,29 +375,49 @@ class _ItemViewerHeader extends StatelessWidget {
                 ]))
           ]),
           const SizedBox(height: 10),
-          const Text('Elizabeth bradely',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          Text(order.buyer.upper(),
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
-          const Text('Order # 9df69644',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+          Text('Order #${order.localId}', style: const TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           Row(
             children: [
-              imageFromassets('car.png', width: 20, height: 20)
+              imageFromassets(getImage(), width: 25, height: 25)
                   .paddingOnly(right: 7),
-              const Flexible(
-                child: Text('Toyota Corolla Silver',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+              Flexible(
+                child: Text(
+                    order.transportation == 'VEHICLE'
+                        ? order.transportationModel.upper()
+                        : order.transportation.upper(),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
-              imageFromassets('plate.png', width: 22, height: 22)
-                  .paddingOnly(left: 7, right: 7),
-              const Text('LQR445',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              if (order.transportation == 'VEHICLE' && order.colour != null)
+                Flexible(
+                    child: Text(order.colour.upper()).paddingOnly(left: 3)),
+              if (order.licensePlate != null && order.licensePlate!.isNotEmpty)
+                imageFromassets('plate.png', width: 22, height: 22)
+                    .paddingOnly(left: 7, right: 7),
+              Text(order.licensePlate!,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ).paddingOnly(top: 3),
           const SizedBox(height: 15)
         ],
       ).marginSymmetric(horizontal: 8),
     );
+  }
+
+  String getImage() {
+    switch (order.transportation) {
+      case 'VEHICLE':
+        return 'car_side.png';
+      case 'BICYLE':
+        return 'bike.png';
+      case 'WALKING':
+        return 'walk.png';
+      default:
+        return 'woman.png';
+    }
   }
 }

@@ -35,4 +35,10 @@
                android:value="AIzaSyBQEQlAQGQHb7xzcRR8sWX8DY7l2uo0z9Y"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <queries>
+    <intent>
+    <action android:name="android.intent.action.DIAL" />
+    <data android:scheme="tel" />
+    </intent>
+    </queries>
 </manifest>
