@@ -8,7 +8,7 @@ class StoreController extends GetxController {
   Rx<User> user = Rx(User());
   RxBool isLoading = false.obs;
   @override
-  void onReady() async {
+  Future<void> onReady() async {
     isLoading(true);
     store(await ApiService.storeInfo());
     user(await ApiService.userInfo());

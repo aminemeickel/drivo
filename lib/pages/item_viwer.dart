@@ -133,13 +133,17 @@ class _ItemViewerState extends State<ItemViewer> {
                         .format(DateTime.parse(order!.scheduleAt!))),
                     const SizedBox(width: 5),
                     InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
+                        onTap: () async {
+                          var selected = await showModalBottomSheet(
                               context: context,
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,
-                              builder: (context) =>
-                                  BottomSheetModel(onPress: (number) {}));
+                              builder: (context) => const BottomSheetModel());
+                          if (selected != null) {
+                            if (selected as int > 0) {
+                              Fluttertoast.showToast(msg: '$selected');
+                            }
+                          }
                         },
                         child:
                             imageFromassets('edit.png', width: 25, height: 25))
@@ -216,8 +220,7 @@ class _ItemViewerState extends State<ItemViewer> {
 }
 
 class BottomSheetModel extends StatefulWidget {
-  final ValueSetter<int> onPress;
-  const BottomSheetModel({Key? key, required this.onPress}) : super(key: key);
+  const BottomSheetModel({Key? key}) : super(key: key);
 
   @override
   State<BottomSheetModel> createState() => _BottomSheetModelState();
@@ -290,6 +293,9 @@ class _BottomSheetModelState extends State<BottomSheetModel> {
                           width: Get.width * .9,
                           child: TextField(
                               keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                _selectedMins = int.tryParse(val) ?? -1;
+                              },
                               decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.all(10),
                                   border: _border,
@@ -299,13 +305,14 @@ class _BottomSheetModelState extends State<BottomSheetModel> {
                                       child: Text('minutes')))))
                       .paddingOnly(bottom: 20),
                   SizedBox(
-                          width: Get.width,
-                          height: 55,
-                          child: MainButton(
-                              text: const Text('Confirm time',
-                                  style: TextStyle(fontSize: 18)),
-                              onpressd: () {}))
-                      .paddingSymmetric(horizontal: 20),
+                      width: Get.width,
+                      height: 55,
+                      child: MainButton(
+                          text: const Text('Confirm time',
+                              style: TextStyle(fontSize: 18)),
+                          onpressd: () {
+                            Get.back(result: _selectedMins);
+                          })).paddingSymmetric(horizontal: 20),
                   const SizedBox(height: 10)
                 ])));
   }

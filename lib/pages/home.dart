@@ -5,7 +5,6 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

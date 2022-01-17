@@ -122,4 +122,20 @@ class ApiService {
       return false;
     }
   }
+
+  static Future<bool> updateLanguge(String languge, String name) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var respose = await client
+          .put('/store/profile', data: {'name': name, 'language': languge});
+      Log.verbose(respose.data);
+      if (respose.statusCode == 200) {
+        return true;
+      }
+    } on DioError catch (e) {
+      Log.error(e.message);
+      return false;
+    }
+    return false;
+  }
 }

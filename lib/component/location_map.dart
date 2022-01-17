@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/log.dart';
 import 'package:http/http.dart' as http;
