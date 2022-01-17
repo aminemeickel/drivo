@@ -3,12 +3,12 @@ import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
 import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
+import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:location/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomePage extends StatefulWidget {
   static const id = '/home';
@@ -22,6 +22,8 @@ class _HomePageState extends State<HomePage> {
   bool listView = true;
   int position = 0;
   var orderController = Get.find<OrderController>();
+  var store = Get.find<StoreController>();
+  var storeLocation = Get.find<StoreController>().store.value.storeLocation;
   @override
   void dispose() {
     super.dispose();
@@ -67,7 +69,7 @@ class _HomePageState extends State<HomePage> {
       bottomSheet: null,
       body: Obx(
         () => orderController.isLoading.isTrue
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator.adaptive())
             : Column(
                 children: [
                   if (!listView) const LocationMap(useOpenStreatMap: false),
@@ -77,8 +79,8 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       itemCount: orderController.orders.length,
                       itemBuilder: (context, index) => ItemTile(
-                        order: orderController.orders.elementAt(index),
-                      ),
+                          order: orderController.orders.elementAt(index),
+                          storeLocation: storeLocation),
                       separatorBuilder: (context, index) => const Divider(),
                     )),
                   ),
@@ -86,33 +88,6 @@ class _HomePageState extends State<HomePage> {
               ),
       ),
     );
-  }
-
-  Future<dynamic> location() async {
-    Location location = Location();
-
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return false;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return false;
-      }
-    }
-
-    _locationData = await location.getLocation();
-    return _locationData;
   }
 }
 
@@ -156,8 +131,9 @@ class _AppBarButton extends StatelessWidget {
 
 class ItemTile extends StatelessWidget {
   final Order order;
-  final String status;
-  const ItemTile({Key? key, this.status = 'Arrived', required this.order})
+
+  final LatLng? storeLocation;
+  const ItemTile({Key? key, required this.order, this.storeLocation})
       : super(key: key);
 
   @override
@@ -169,9 +145,11 @@ class ItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              status,
-              style: const TextStyle(
-                  color: kAppPrimaryColor,
+              _orderStatus == OrderStatus.Transit
+                  ? 'In Transit'
+                  : _orderStatus.name,
+              style: TextStyle(
+                  color: _statusColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 15),
             ),
@@ -186,7 +164,7 @@ class ItemTile extends StatelessWidget {
         Row(
           children: [
             Text(
-              '${order.buyer} -Order #${order.orderNumber}',
+              '${order.buyer.upper()} -Order #${order.orderNumber!.replaceAll('-', '')}',
               style: const TextStyle(color: Color(0xFF392726)),
             ).paddingOnly(top: 5),
             const Spacer(),
@@ -200,13 +178,11 @@ class ItemTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10)),
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  child: const Text(
-                    'Curbside',
-                    style: TextStyle(
-                        color: kAppPrimaryColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  child: Text(order.pickupType.upper(),
+                      style: const TextStyle(
+                          color: kAppPrimaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600)),
                 ),
                 SizedBox(
                   width: 30,
@@ -240,4 +216,26 @@ class ItemTile extends StatelessWidget {
       ],
     ).paddingSymmetric(horizontal: 10, vertical: 8);
   }
+
+  OrderStatus get _orderStatus {
+    if (order.customerLocation != null && storeLocation != null) {
+      var distance = calculateDistance(order.customerLocation!, storeLocation!);
+      if (distance <= 1) return OrderStatus.Arrived;
+      if (distance <= 5) return OrderStatus.Approaching;
+    }
+    return OrderStatus.Transit;
+  }
+
+  Color get _statusColor {
+    switch (_orderStatus) {
+      case OrderStatus.Approaching:
+        return kAppsecondryColor;
+      case OrderStatus.Transit:
+        return const Color(0xFF666666);
+      default:
+        return kAppPrimaryColor;
+    }
+  }
+
+  String get timeState => '';
 }

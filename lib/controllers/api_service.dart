@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Models/store.dart';
 import 'package:drivo/Models/token.dart';
+import 'package:drivo/Models/user.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/controllers/auth_controller.dart';
 import 'package:drivo/core/app.dart';
@@ -32,6 +33,18 @@ class ApiService {
       var response = await client.get('/store');
       if (response.statusCode! == 200) {
         return Store.fromJson(response.data['data']);
+      }
+    } on DioError catch (excpetion) {
+      Log.error(excpetion.message);
+    }
+  }
+
+  static Future<User?> userInfo() async {
+    var client = await HTTPClient.getClient();
+    try {
+      var response = await client.get('/store/profile');
+      if (response.statusCode! == 200) {
+        return User.fromJson(response.data['data']['user']);
       }
     } on DioError catch (excpetion) {
       Log.error(excpetion.message);

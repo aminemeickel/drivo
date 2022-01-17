@@ -1,5 +1,10 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:collection/collection.dart';
 import 'package:drivo/Models/detail_items.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+enum OrderStatus { Arrived, Approaching, Transit }
 
 class Order {
   String? orderId;
@@ -13,8 +18,8 @@ class Order {
   int? netto;
   String? payment;
   String? status;
-  dynamic lat;
-  dynamic lng;
+  num? lat;
+  num? lng;
   int? discNominal;
   String? scheduleAt;
   String? orderNumber;
@@ -31,7 +36,9 @@ class Order {
   dynamic couponCode;
   dynamic couponName;
   Iterable<DetailItem>? detailItem;
-
+  LatLng? get customerLocation => lat != null && lng != null
+      ? LatLng(lat!.toDouble(), lng!.toDouble())
+      : null;
   Order(
       {this.orderId,
       this.userId,
@@ -80,8 +87,8 @@ class Order {
       netto: json['netto'] as int?,
       payment: json['payment'] as String?,
       status: json['status'] as String?,
-      lat: json['lat'] as dynamic,
-      lng: json['lng'] as dynamic,
+      lat: json['lat'] as num?,
+      lng: json['lng'] as num?,
       discNominal: json['disc_nominal'] as int?,
       scheduleAt: json['schedule_at'] as String?,
       orderNumber: json['order_number'] as String?,

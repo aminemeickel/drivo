@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Store {
   final String? storeId;
@@ -24,7 +25,8 @@ class Store {
   final String? cityId;
   final String? stateId;
   final String? countryId;
-
+  LatLng? get storeLocation =>
+      lat != null && lng != null ? LatLng(lat!, lng!) : null;
   const Store({
     this.storeId,
     this.userId,

@@ -1,14 +1,18 @@
+import 'package:drivo/Models/order.dart';
 import 'package:drivo/Models/store.dart';
+import 'package:drivo/Models/user.dart';
 import 'package:drivo/Utils/utils.dart';
+import 'package:drivo/component/main_button.dart';
 import 'package:drivo/component/navigation_bar.dart';
+import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
 import 'package:drivo/core/log.dart';
 import 'package:drivo/core/storage.dart';
 import 'package:drivo/pages/login.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Profile extends StatefulWidget {
   static const id = '/profile';
@@ -21,6 +25,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   late StoreController storeController = Get.find();
   Store get store => storeController.store.value;
+  User get user => storeController.user.value;
   final _isEnabled = [false, false, false, false];
   @override
   void initState() {
@@ -59,7 +64,7 @@ class _ProfileState extends State<Profile> {
               : Column(children: [
                   const SizedBox(height: 15),
                   _listTileBuilder(
-                      iconName: 'account.png', text: store.storeName ?? ''),
+                      iconName: 'account.png', text: user.fullname ?? ''),
                   const Divider(thickness: 1.1),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -118,12 +123,6 @@ class _ProfileState extends State<Profile> {
                               .paddingOnly(left: 5)
                         ])),
                   ).paddingOnly(bottom: 40),
-                  // ElevatedButton(
-                  //     onPressed: () async {
-                  //       Log.verbose(
-                  //           await FirebaseMessaging.instance.getToken());
-                  //     },
-                  //     child: const Text('SHOW NOTIFICATION'))
                 ]),
         ));
   }
