@@ -22,7 +22,6 @@ class _ItemViewerState extends State<ItemViewer> {
   final card = {
     'Phone': 'call_out.png',
     'Details': 'documnt.png',
-    'Message': 'messages.png',
   };
   @override
   Widget build(BuildContext context) {
@@ -114,29 +113,32 @@ class _ItemViewerState extends State<ItemViewer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: card.keys
-                .map((item) => Container(
-                      width: Get.width / 3.5,
-                      height: 130,
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: BoxDecoration(
-                          color: item == 'Details'
-                              ? kAppPrimaryColor
-                              : kAppsecondryColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          imageFromassets(card[item]!, width: 34, height: 35),
-                          const SizedBox(height: 25),
-                          Text(item,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: item == 'Details'
-                                      ? Colors.white
-                                      : kAppPrimaryColor)),
-                          const SizedBox(height: 15)
-                        ],
+                .map((item) => GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: Get.width / 3.5,
+                        height: 130,
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        decoration: BoxDecoration(
+                            color: item == 'Details'
+                                ? kAppPrimaryColor
+                                : kAppsecondryColor,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            imageFromassets(card[item]!, width: 34, height: 35),
+                            const SizedBox(height: 25),
+                            Text(item,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: item == 'Details'
+                                        ? Colors.white
+                                        : kAppPrimaryColor)),
+                            const SizedBox(height: 15)
+                          ],
+                        ),
                       ),
                     ))
                 .toList(),

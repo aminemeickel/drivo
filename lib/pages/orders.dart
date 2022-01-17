@@ -94,12 +94,23 @@ class _OrderTile extends StatelessWidget {
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              '₽ ${order.netto}',
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: kAppPrimaryColor),
+            Text.rich(
+              TextSpan(
+                  text: '₽',
+                  style: const TextStyle(
+                      fontFamily: 'russian',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: kAppPrimaryColor),
+                  children: [
+                    TextSpan(
+                        text: ' ${order.netto}',
+                        style: const TextStyle(
+                            fontFamily: 'GothamPro',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: kAppPrimaryColor))
+                  ]),
             ),
             const SizedBox(height: 10),
             SizedBox(

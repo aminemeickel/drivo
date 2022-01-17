@@ -58,3 +58,7 @@ flutter:
         - asset: assets/fonts/Gotham/GothamPro-Italic.ttf
         - asset: assets/fonts/Gotham/GothamPro.ttf
           weight: 900
+    - family: russian
+      fonts:
+        - asset: assets/fonts/russian/ui_icons.ttf
+        

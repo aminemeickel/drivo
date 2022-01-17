@@ -174,12 +174,23 @@ class _OrderTile extends StatelessWidget {
           if (detailItem.extras != null && detailItem.extras!.isNotEmpty)
             ...detailItem.extras!.map((e) => Text('+ ${e.name!}'))
         ])),
-        Text(
-          '₽${detailItem.netto}',
-          style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: kAppPrimaryColor,
-              fontSize: 16),
+        Text.rich(
+          TextSpan(
+              text: '₽',
+              style: const TextStyle(
+                  fontFamily: 'russian',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: kAppPrimaryColor),
+              children: [
+                TextSpan(
+                  text: ' ${detailItem.netto}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: kAppPrimaryColor,
+                      fontSize: 16),
+                )
+              ]),
         ).paddingOnly(top: 8, right: 10)
       ],
     );
