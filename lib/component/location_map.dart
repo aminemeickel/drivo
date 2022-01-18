@@ -32,23 +32,17 @@ class _LocationMapState extends State<LocationMap> {
     var store = Get.find<StoreController>().store.value;
     if (store.lat != null && store.lng != null) {
       storePosition = LatLng(store.lat!, store.lng!);
-      if (store.storeImage != null) {
-        http.get(Uri.parse(store.storeImage!)).then((response) async {
-          _storeBitMap = await getImage(response.bodyBytes);
-          setState(() {
-            _marks.add(Marker(
-                markerId: const MarkerId('Store'),
-                position: storePosition!,
-                icon: _storeBitMap!));
-          });
+      BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(size: Size(100, 100)),
+              'assets/location/store.png')
+          .then((value) {
+        setState(() {
+          _marks.add(Marker(
+              markerId: const MarkerId('Store'),
+              position: storePosition!,
+              icon: value));
         });
-      } else {
-        Log.verbose('else');
-        _marks.add(Marker(
-          markerId: const MarkerId('Store'),
-          position: storePosition!,
-        ));
-      }
+      });
     }
 
     super.initState();

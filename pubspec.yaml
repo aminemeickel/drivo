@@ -49,6 +49,7 @@ flutter:
     - assets/
     - assets/splashScreen/
     - assets/icons/
+    - assets/location/
   fonts:
     - family: GothamPro
       fonts:

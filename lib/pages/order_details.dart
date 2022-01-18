@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:drivo/Models/detail_items.dart';
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
@@ -6,6 +8,7 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -20,10 +23,10 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
-  int mints = 0;
+  var mints = 0;
   Order? order;
-  RxBool updating = false.obs;
-  RxBool cancel = false.obs;
+  final _updatReady = false.obs;
+  final _updateCancel = false.obs;
   @override
   void initState() {
     super.initState();
@@ -56,26 +59,65 @@ class _OrderDetailsState extends State<OrderDetails> {
                         height: 60,
                         child: MainButtonSecondary(
                           text: Obx(() => Text(
-                              cancel.isTrue ? 'Updating...' : 'Cancel',
+                              _updateCancel.isTrue ? 'Updating...' : 'Cancel',
                               style: const TextStyle(
                                   fontSize: 18,
                                   color: kAppPrimaryColor,
                                   fontWeight: FontWeight.w600))),
                           onpressd: () async {
-                            if (updating.isTrue || cancel.isTrue) return;
-                            cancel(true);
-                            var response = await ApiService.updateOrderStatus(
-                                order!.orderId!, 'canceled');
-                            if (response) {
-                              await Get.find<OrderController>().onReady();
-                              cancel(false);
-                              Get.back();
-                              Fluttertoast.showToast(msg: 'Order canceld!');
+                            if (_updatReady.isTrue || _updateCancel.isTrue) {
                               return;
                             }
-                            cancel(false);
-                            Fluttertoast.showToast(
-                                msg: 'Error please try again!');
+                            var confirm = await showDialog(
+                                context: context,
+                                builder: (context) => SimpleDialog(
+                                      contentPadding: const EdgeInsets.all(20),
+                                      children: [
+                                        const Text(
+                                          'Are you sure you want to cancel this order',
+                                          style: TextStyle(
+                                              fontSize: 18, height: 1.5),
+                                        ).paddingOnly(bottom: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            TextButton(
+                                                onPressed: () =>
+                                                    Get.back(result: true),
+                                                child: const Text('Yes',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color:
+                                                            kAppPrimaryColor))),
+                                            TextButton(
+                                                onPressed: () =>
+                                                    Get.back(result: false),
+                                                child: const Text(
+                                                  'No',
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: kAppPrimaryColor),
+                                                )),
+                                          ],
+                                        )
+                                      ],
+                                    ));
+                            if (confirm != null && confirm) {
+                              _updateCancel(true);
+                              var response = await ApiService.updateOrderStatus(
+                                  order!.orderId!, 'canceled');
+                              if (response) {
+                                await Get.find<OrderController>().onReady();
+                                _updateCancel(false);
+                                Get.back();
+                                Fluttertoast.showToast(msg: 'Order canceld!');
+                                return;
+                              }
+                              _updateCancel(false);
+                              Fluttertoast.showToast(
+                                  msg: 'Error please try again!');
+                            }
                           },
                         ).paddingSymmetric(vertical: 9, horizontal: 10),
                       ),
@@ -86,13 +128,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                       height: 60,
                       child: MainButton(
                         text: Obx(() => Text(
-                            updating.isTrue
+                            _updatReady.isTrue
                                 ? 'Updating..'
                                 : 'Mark as ${order!.status!.toLowerCase() == 'approved' ? 'Ready' : 'Completed'}',
                             style: const TextStyle(fontSize: 18))),
                         onpressd: () async {
-                          if (updating.isTrue) return;
-                          updating(true);
+                          if (_updatReady.isTrue) return;
+                          _updatReady(true);
                           var response = await ApiService.updateOrderStatus(
                               order!.orderId!,
                               orderStatus == 'approved'
@@ -100,12 +142,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   : 'completed');
                           if (response) {
                             await Get.find<OrderController>().onReady();
-                            updating(false);
+                            _updatReady(false);
                             Get.back();
                             Fluttertoast.showToast(msg: 'Status Updated');
                             return;
                           }
-                          updating(false);
+                          _updatReady(false);
                           Fluttertoast.showToast(
                               msg: 'Error please try again!');
                         },
@@ -135,15 +177,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                             detailItem: order!.detailItem!.elementAt(index)))),
                 const SizedBox(height: 70)
               ]));
-  }
-
-  getButtonText() {
-    if (order != null) {
-      switch (order!.status) {
-        case 'approved':
-          return {'Cancel': 'Mark as Ready'};
-      }
-    }
   }
 }
 
