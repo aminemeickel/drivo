@@ -22,19 +22,29 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _mailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  var _en = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 20,
+      ),
       body: SizedBox.fromSize(
         size: Get.size,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Row(
+                children: [
+                  buildLangContainer('RU', !_en),
+                  buildLangContainer('EN', _en),
+                ],
+              ),
               imageFromassets('logo_red.png'),
               Container(
                 margin: EdgeInsets.only(top: Get.height * .14),
@@ -110,6 +120,17 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 40),
+              TextButton(
+                onPressed: () {
+                  Fluttertoast.showToast(msg: 'Coming soon');
+                },
+                child: const Text('Call Drivo Support',
+                    style: TextStyle(
+                        color: kAppPrimaryColor,
+                        decoration: TextDecoration.underline,
+                        fontSize: 16)),
               )
             ],
           ),
@@ -139,6 +160,36 @@ class _LoginState extends State<Login> {
       Fluttertoast.showToast(msg: 'Please read and agree on terms');
     }
   }
+
+  Widget buildLangContainer(
+    String text,
+    bool isSelcted,
+  ) =>
+      InkWell(
+        onTap: () {
+          setState(() {
+            _en = !_en;
+          });
+        },
+        child: Container(
+          width: 35,
+          height: 35,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(left: 10),
+          child: Text(
+            text,
+            style: TextStyle(
+                color: isSelcted ? Colors.white : kAppPrimaryColor,
+                fontSize: 16),
+          ),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelcted ? kAppPrimaryColor : Colors.white,
+              border: isSelcted
+                  ? null
+                  : Border.all(width: 3, color: kAppPrimaryColor)),
+        ),
+      );
 }
 
 class LoginFormFiled extends StatelessWidget {

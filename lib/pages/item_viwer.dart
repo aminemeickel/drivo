@@ -354,10 +354,13 @@ class _ItemViewerHeader extends StatelessWidget {
           ),
           const Divider(thickness: 1.5),
           Row(children: [
-            const Text('customer has arrived',
-                style: TextStyle(
-                    color: kAppPrimaryColor, fontWeight: FontWeight.w600)),
-            const Spacer(),
+            const Flexible(
+              flex: 30,
+              fit: FlexFit.loose,
+              child: Text('customer has arrived',
+                  style: TextStyle(
+                      color: kAppPrimaryColor, fontWeight: FontWeight.w600)),
+            ),
             Container(
                 decoration: BoxDecoration(
                     border: Border.all(color: kAppPrimaryColor, width: 1.5),

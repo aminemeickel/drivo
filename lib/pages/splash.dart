@@ -22,19 +22,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    ///Simplest way to do this ... it can be done with future builder but
-    /// it will much more complicated
-
-    ///switching the color
-    Timer(const Duration(seconds: 1), () {
-      seconds++;
-      setState(() {
-        selectedColor = kAppPrimaryColor;
-      });
-    });
-
-    ///switching the page
     Future.delayed(const Duration(seconds: 2), () async {
       if (AuthController.isAuthnthicated) {
         AuthController.initControllers();
@@ -49,13 +36,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AnimatedContainer(
-            color: selectedColor,
-            duration: const Duration(milliseconds: 600),
-            child: Align(
-                alignment: Alignment.center,
-                child: Image.asset(
-                    'assets/splashScreen/${selectedColor == Colors.white ? "logo_bg_orange" : "logo_bg_white"}.png',
-                    width: Get.width * .9))));
+        body: Image.asset(
+      'assets/splashScreen/splash_screen.png',
+      width: Get.width,
+      height: Get.height,
+      fit: BoxFit.cover,
+    ));
   }
 }

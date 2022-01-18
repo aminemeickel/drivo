@@ -7,6 +7,7 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
+import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,9 +88,9 @@ class _HomePageState extends State<HomePage> {
                         : Expanded(
                             child: ListView.separated(
                             shrinkWrap: true,
-                            itemCount: orderController.ready.length,
+                            itemCount: orderController.orders.length,
                             itemBuilder: (context, index) => ItemTile(
-                                order: orderController.ready.elementAt(index),
+                                order: orderController.orders.elementAt(index),
                                 storeLocation: storeLocation),
                             separatorBuilder: (context, index) =>
                                 const Divider(),
@@ -151,6 +152,7 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        Log.verbose(order.status);
         Get.toNamed(ItemViewer.id, arguments: order);
       },
       child: Column(
