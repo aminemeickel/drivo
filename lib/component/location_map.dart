@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
-
 import 'package:drivo/controllers/store_controller.dart';
-import 'package:drivo/core/log.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:drivo/core/app.dart';
@@ -22,7 +20,6 @@ class _LocationMapState extends State<LocationMap> {
   final LatLng _random = const LatLng(45.521563, -122.677433);
   LatLng? storePosition;
   final Set<Marker> _marks = {};
-  BitmapDescriptor? _storeBitMap;
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -32,17 +29,7 @@ class _LocationMapState extends State<LocationMap> {
     var store = Get.find<StoreController>().store.value;
     if (store.lat != null && store.lng != null) {
       storePosition = LatLng(store.lat!, store.lng!);
-      BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(size: Size(100, 100)),
-              'assets/location/store.png')
-          .then((value) {
-        setState(() {
-          _marks.add(Marker(
-              markerId: const MarkerId('Store'),
-              position: storePosition!,
-              icon: value));
-        });
-      });
+      addMarks();
     }
 
     super.initState();
@@ -113,14 +100,69 @@ class _LocationMapState extends State<LocationMap> {
     );
   }
 
-  Future<BitmapDescriptor> getImage(Uint8List imageByte) async {
-    final Codec imageCodec = await instantiateImageCodec(imageByte,
-        targetWidth: 200, targetHeight: 200);
-    final FrameInfo frameInfo = await imageCodec.getNextFrame();
-    final byteData = await frameInfo.image.toByteData(
-      format: ImageByteFormat.png,
-    );
-    final Uint8List resizedMarkerImageBytes = byteData!.buffer.asUint8List();
-    return BitmapDescriptor.fromBytes(resizedMarkerImageBytes);
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    Codec codec = await instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  void addMarks() {
+    getBytesFromAsset('assets/location/store.png', 100).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('Store'),
+            position: storePosition!,
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
+    getBytesFromAsset('assets/location/person.png', 90).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('person'),
+            position: LatLng(
+                storePosition!.latitude - .05, storePosition!.longitude - 0.01),
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
+    getBytesFromAsset('assets/location/person.png', 90).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('person2'),
+            position: LatLng(
+                storePosition!.latitude - .05, storePosition!.longitude - 0.01),
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
+    getBytesFromAsset('assets/location/person.png', 90).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('person2'),
+            position: LatLng(
+                storePosition!.latitude - .03, storePosition!.longitude - 0.03),
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
+    getBytesFromAsset('assets/location/car.png', 100).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('car'),
+            position: LatLng(
+                storePosition!.latitude + .05, storePosition!.longitude + 0.01),
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
+    getBytesFromAsset('assets/location/car.png', 100).then((value) {
+      setState(() {
+        _marks.add(Marker(
+            markerId: const MarkerId('car2'),
+            position: LatLng(
+                storePosition!.latitude + .05, storePosition!.longitude + 0.05),
+            icon: BitmapDescriptor.fromBytes(value)));
+      });
+    });
   }
 }
