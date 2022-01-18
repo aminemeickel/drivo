@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
@@ -72,18 +74,26 @@ class _HomePageState extends State<HomePage> {
         () => orderController.isLoading.isTrue
             ? const Center(child: CircularProgressIndicator.adaptive())
             : Column(
+                mainAxisAlignment: listView
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
                 children: [
                   if (!listView) const LocationMap(useOpenStreatMap: false),
                   Obx(
-                    () => Expanded(
-                        child: ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: orderController.ready.length,
-                      itemBuilder: (context, index) => ItemTile(
-                          order: orderController.ready.elementAt(index),
-                          storeLocation: storeLocation),
-                      separatorBuilder: (context, index) => const Divider(),
-                    )),
+                    () => orderController.ready.isEmpty && listView
+                        ? const Center(
+                            child: Text('No orders!!',
+                                style: TextStyle(fontSize: 22)))
+                        : Expanded(
+                            child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: orderController.ready.length,
+                            itemBuilder: (context, index) => ItemTile(
+                                order: orderController.ready.elementAt(index),
+                                storeLocation: storeLocation),
+                            separatorBuilder: (context, index) =>
+                                const Divider(),
+                          )),
                   ),
                 ],
               ),
@@ -169,7 +179,7 @@ class ItemTile extends StatelessWidget {
           Row(
             children: [
               Text(
-                '${order.buyer.upper()} -Order #${order.orderNumber!.replaceAll('-', '')}',
+                '${order.buyer.upper()} -Order #${order.localId}',
                 style: const TextStyle(color: Color(0xFF392726)),
               ).paddingOnly(top: 5),
               const Spacer(),

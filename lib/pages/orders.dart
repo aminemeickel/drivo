@@ -90,7 +90,7 @@ class _OrderTile extends StatelessWidget {
         title: Text('${order.buyer}',
             style: const TextStyle(
                 color: Color(0xFF392726), fontWeight: FontWeight.w700)),
-        subtitle: Text('Order #${order.orderNumber?.split('-').first}'),
+        subtitle: Text('Order #${order.localId}'),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
