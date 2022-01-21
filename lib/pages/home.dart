@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/location_map.dart';
@@ -7,7 +5,6 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/controllers/store_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -79,9 +76,9 @@ class _HomePageState extends State<HomePage> {
                     ? MainAxisAlignment.center
                     : MainAxisAlignment.start,
                 children: [
-                  if (!listView) const LocationMap(useOpenStreatMap: false),
+                  if (!listView) const LocationMap(),
                   Obx(
-                    () => orderController.ready.isEmpty && listView
+                    () => orderController.orders.isEmpty && listView
                         ? const Center(
                             child: Text('No orders!!',
                                 style: TextStyle(fontSize: 22)))
@@ -152,7 +149,6 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Log.verbose(order.status);
         Get.toNamed(ItemViewer.id, arguments: order);
       },
       child: Column(
@@ -179,42 +175,41 @@ class ItemTile extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
-              Text(
-                '${order.buyer.upper()} -Order #${order.localId}',
-                style: const TextStyle(color: Color(0xFF392726)),
-              ).paddingOnly(top: 5),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: kAppPrimaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10)),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: Text(order.pickupType.upper(),
-                        style: const TextStyle(
-                            color: kAppPrimaryColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    width: 30,
-                    height: 20,
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        iconSize: 20,
-                        onPressed: () {
-                          Get.toNamed(ItemViewer.id, arguments: order);
-                        },
-                        icon: const Icon(Icons.arrow_forward_ios,
-                            color: kAppPrimaryColor, size: 20)),
-                  )
-                ],
+              Expanded(
+                child: Text(
+                  '${order.buyer.upper()} -Order #${order.orderNumber}',
+                  style: const TextStyle(
+                      height: 1.1,
+                      color: Color(0xFF392726),
+                      overflow: TextOverflow.fade),
+                ).paddingOnly(top: 5),
               ),
+              Container(
+                decoration: BoxDecoration(
+                    color: kAppPrimaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                child: Text(order.pickupType.upper(),
+                    style: const TextStyle(
+                        color: kAppPrimaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600)),
+              ),
+              SizedBox(
+                width: 25,
+                height: 20,
+                child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
+                    onPressed: () {
+                      Get.toNamed(ItemViewer.id, arguments: order);
+                    },
+                    icon: const Icon(Icons.arrow_forward_ios,
+                        color: kAppPrimaryColor, size: 20)),
+              )
             ],
           ).paddingOnly(top: 10, bottom: 5),
           Row(
@@ -249,7 +244,8 @@ class ItemTile extends StatelessWidget {
 
   List<Widget> getRow() {
     switch (_orderStatus) {
-      case OrderStatus.Arrived:
+      //this should be arrived
+      case OrderStatus.Transit:
         return [
           imageFromassets(getImage(), width: 20, height: 20)
               .paddingOnly(right: 7),
@@ -270,7 +266,7 @@ class ItemTile extends StatelessWidget {
         ];
 
       case OrderStatus.Approaching:
-      case OrderStatus.Transit:
+      case OrderStatus.Arrived:
         return [
           imageFromassets('call.png', width: 22, height: 22),
           Text('(408)-${order.orderNumber!}').paddingOnly(left: 10, top: 5)

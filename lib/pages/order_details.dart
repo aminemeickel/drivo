@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:drivo/Models/detail_items.dart';
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
@@ -8,10 +6,10 @@ import 'package:drivo/component/navigation_bar.dart';
 import 'package:drivo/controllers/api_service.dart';
 import 'package:drivo/controllers/order_controller.dart';
 import 'package:drivo/core/app.dart';
-import 'package:drivo/core/log.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -209,10 +207,10 @@ class _OrderTile extends StatelessWidget {
         Text.rich(
           TextSpan(
               text: '₽',
-              style: const TextStyle(
-                  fontFamily: 'russian',
+              style: GoogleFonts.roboto(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
                   color: kAppPrimaryColor),
               children: [
                 TextSpan(

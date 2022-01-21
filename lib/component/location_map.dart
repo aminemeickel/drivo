@@ -8,8 +8,7 @@ import 'package:drivo/core/app.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationMap extends StatefulWidget {
-  final bool useOpenStreatMap;
-  const LocationMap({Key? key, this.useOpenStreatMap = true}) : super(key: key);
+  const LocationMap({Key? key}) : super(key: key);
 
   @override
   State<LocationMap> createState() => _LocationMapState();

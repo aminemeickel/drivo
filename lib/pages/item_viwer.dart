@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:ui';
-
 import 'package:drivo/Models/order.dart';
 import 'package:drivo/Utils/utils.dart';
 import 'package:drivo/component/main_button.dart';
@@ -33,10 +33,26 @@ class _ItemViewerState extends State<ItemViewer> {
   final RxBool _updating = false.obs;
   final RxBool _fatching = false.obs;
   Order? order;
+  RxInt timeDifference = 0.obs;
   @override
   void initState() {
     order = Get.arguments;
     super.initState();
+    timeDifference(DateTime.now()
+        .difference(DateTime.parse(order!.scheduleAt!))
+        .inMinutes);
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      timeDifference(DateTime.now()
+          .difference(DateTime.parse(order!.scheduleAt!))
+          .inMinutes);
+    });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -112,8 +128,7 @@ class _ItemViewerState extends State<ItemViewer> {
                 'Waiting',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              trailing: Text(
-                  '${DateTime.now().difference(DateTime.parse(order!.scheduleAt!)).inMinutes} mins'),
+              trailing: Obx(() => Text('${timeDifference.value} mins')),
             ),
           ),
           const Divider(thickness: 1.1).paddingSymmetric(horizontal: 15),
@@ -122,29 +137,19 @@ class _ItemViewerState extends State<ItemViewer> {
             child: ListTile(
               horizontalTitleGap: 5,
               minLeadingWidth: 25,
+              contentPadding: const EdgeInsets.only(left: 18),
               leading: imageFromassets('calander.png', width: 20, height: 20),
               title: const Text('Scheduled',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               trailing: SizedBox(
-                width: 88,
+                width: 97,
                 child: Row(
                   children: [
                     Text(DateFormat.jm()
                         .format(DateTime.parse(order!.scheduleAt!))),
                     const SizedBox(width: 5),
                     InkWell(
-                        onTap: () async {
-                          var selected = await showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              builder: (context) => const BottomSheetModel());
-                          if (selected != null) {
-                            if (selected as int > 0) {
-                              Fluttertoast.showToast(msg: '$selected');
-                            }
-                          }
-                        },
+                        onTap: updateOrderTime,
                         child:
                             imageFromassets('edit.png', width: 25, height: 25))
                   ],
@@ -212,9 +217,34 @@ class _ItemViewerState extends State<ItemViewer> {
 
   void callNumber() async {
     try {
+      Fluttertoast.showToast(msg: 'Phone Number not found');
+      return;
       await launch('tel:+408${order?.orderNumber!.replaceAll('-', '')}');
     } catch (e) {
       Fluttertoast.showToast(msg: "Can't Open Phone Caller");
+    }
+  }
+
+  void updateOrderTime() async {
+    var selected = await showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => const BottomSheetModel());
+    if (selected != null) {
+      if (selected as int > 0) {
+        var responseOrder =
+            await ApiService.setPickupTime(selected, order!.orderId!);
+        if (responseOrder != null) {
+          unawaited(Get.find<OrderController>().updateOnly(0));
+          var buyerName = order?.buyer;
+          setState(() {
+            order = responseOrder;
+            order?.buyer = buyerName;
+          });
+          Fluttertoast.showToast(msg: 'Time Updated');
+        }
+      }
     }
   }
 }
@@ -324,6 +354,7 @@ class _BottomSheetModelState extends State<BottomSheetModel> {
 
 class _ItemViewerHeader extends StatelessWidget {
   final Order order;
+
   const _ItemViewerHeader({Key? key, required this.order}) : super(key: key);
 
   @override
@@ -354,9 +385,7 @@ class _ItemViewerHeader extends StatelessWidget {
           ),
           const Divider(thickness: 1.5),
           Row(children: [
-            const Flexible(
-              flex: 30,
-              fit: FlexFit.loose,
+            const Expanded(
               child: Text('customer has arrived',
                   style: TextStyle(
                       color: kAppPrimaryColor, fontWeight: FontWeight.w600)),
@@ -393,7 +422,8 @@ class _ItemViewerHeader extends StatelessWidget {
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
-          Text('Order #${order.localId}', style: const TextStyle(fontSize: 17)),
+          Text('Order #${order.orderNumber}',
+              style: const TextStyle(fontSize: 17)),
           const SizedBox(height: 10),
           Row(
             children: [

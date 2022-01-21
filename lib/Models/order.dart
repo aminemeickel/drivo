@@ -70,14 +70,6 @@ class Order {
       this.couponName,
       this.detailItem});
 
-  String get localId {
-    var pos = orderId?.indexOf('-');
-    if (pos != null && orderId != null && orderId!.isNotEmpty) {
-      return orderId!.substring(0, pos);
-    }
-    return orderId ?? '';
-  }
-
   @override
   String toString() {
     return 'Order(orderId: $orderId, userId: $userId, storeId: $storeId, createdAt: $createdAt, orderType: $orderType, coupon: $coupon, disc: $disc, brutto: $brutto, netto: $netto, payment: $payment, status: $status, lat: $lat, lng: $lng, discNominal: $discNominal, scheduleAt: $scheduleAt, orderNumber: $orderNumber, rating: $rating, comment: $comment, detailOrders: $detailOrders, transportation: $transportation, transportationModel: $transportationModel, colour: $colour, licensePlate: $licensePlate, pickupType: $pickupType, storeName: $storeName, buyer: $buyer, couponCode: $couponCode, couponName: $couponName items : $detailItem)';

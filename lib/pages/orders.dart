@@ -8,6 +8,7 @@ import 'package:drivo/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Orders extends GetView<OrderController> {
   static const id = '/orders';
@@ -87,20 +88,31 @@ class _OrderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+        onTap: () async {
+          if (isWorking.isTrue) return;
+          isWorking(true);
+          Order? selectedOrder = await ApiService.orderById(order.orderId);
+          isWorking(false);
+          if (selectedOrder != null) {
+            Get.toNamed(OrderDetails.id, arguments: selectedOrder);
+          } else {
+            Fluttertoast.showToast(msg: 'Order Not found');
+          }
+        },
         title: Text('${order.buyer}',
             style: const TextStyle(
                 color: Color(0xFF392726), fontWeight: FontWeight.w700)),
-        subtitle: Text('Order #${order.localId}'),
+        subtitle: Text('Order #${order.orderNumber}'),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text.rich(
               TextSpan(
-                  text: '₽',
-                  style: const TextStyle(
-                      fontFamily: 'russian',
+                  text: '\u{20BD}',
+                  style: GoogleFonts.roboto(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
                       color: kAppPrimaryColor),
                   children: [
                     TextSpan(

@@ -138,4 +138,18 @@ class ApiService {
     }
     return false;
   }
+
+  static Future<Order?> setPickupTime(int time, String orderID) async {
+    var client = await HTTPClient.getClient();
+    try {
+      var respose = await client
+          .put('/store_app/orders/$orderID', data: {'schedule_at': time});
+      Log.verbose(respose.data);
+      if (respose.statusCode == 200) {
+        return Order.fromJson(respose.data['data']);
+      }
+    } on DioError catch (e) {
+      Log.error(e.message);
+    }
+  }
 }

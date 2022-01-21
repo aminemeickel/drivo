@@ -13,11 +13,37 @@ class OrderController extends GetxController {
   @override
   Future<void> onReady() async {
     isLoading(true);
-    orders(await ApiService.orders(status: null));
+    var all = await ApiService.orders(status: null);
+    orders(all.where((order) => order.transportation == 'VEHICLE').toList());
     pending(await ApiService.orders(status: 'approved'));
     ready(await ApiService.orders(status: 'delivery'));
     completed(await ApiService.orders(status: 'completed'));
     cancelled(await ApiService.orders(status: 'canceled'));
     isLoading(false);
+  }
+
+  Future<void> updateOnly(int index) async {
+    switch (index) {
+      case 0:
+        var all = await ApiService.orders(status: null);
+        orders(
+            all.where((order) => order.transportation == 'VEHICLE').toList());
+        break;
+      case 1:
+        pending(await ApiService.orders(status: 'approved'));
+        break;
+      case 2:
+        ready(await ApiService.orders(status: 'delivery'));
+        break;
+      case 3:
+        completed(await ApiService.orders(status: 'completed'));
+        break;
+      case 4:
+        cancelled(await ApiService.orders(status: 'canceled'));
+        break;
+      default:
+        await onReady();
+        break;
+    }
   }
 }
