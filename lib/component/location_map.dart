@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:drivo/controllers/store_controller.dart';
+import 'package:drivo/core/log.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,9 @@ class _LocationMapState extends State<LocationMap> {
   final Set<Marker> _marks = {};
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    rootBundle.loadString('assets/mapstyle/dark.json').then((json) {
+      mapController.setMapStyle(json);
+    });
   }
 
   @override
