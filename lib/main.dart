@@ -9,7 +9,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init('main');
   await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
 
@@ -21,6 +20,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: APPNAME,
       debugShowCheckedModeBanner: false,
+      //*App screens if you want to add a new screen it most be added in page.dart and export to be showing here
       getPages: [
         GetPage(name: SplashScreen.id, page: () => const SplashScreen()),
         GetPage(name: Login.id, page: () => const Login()),

@@ -18,10 +18,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //*check if the user has agree on terms
   bool _isChecked = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _mailController = TextEditingController();
   final _passwordController = TextEditingController();
+  //*check if the en {on top of the screen} has been checked
   var _en = true;
   @override
   Widget build(BuildContext context) {
@@ -41,10 +43,13 @@ class _LoginState extends State<Login> {
             children: [
               Row(
                 children: [
+                  //* button in the right of top of the screen
                   buildLangContainer('RU', !_en),
                   buildLangContainer('EN', _en),
                 ],
               ),
+              //*image from assets just pass the name of the image and it will be loaded
+              //*the main path is assets/icons/{image name}
               imageFromassets('logo_red.png'),
               Container(
                 margin: EdgeInsets.only(top: Get.height * .14),
@@ -112,6 +117,8 @@ class _LoginState extends State<Login> {
                       SizedBox(
                           width: Get.width,
                           height: 45,
+                          //*App main button this is the button that it will be in entire app
+                          //*the red one
                           child: MainButton(
                               onpressd: _signIn,
                               text: const Text('Continue',
@@ -122,6 +129,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
               const SizedBox(height: 40),
+
               TextButton(
                 onPressed: () {
                   Fluttertoast.showToast(msg: 'Coming soon');

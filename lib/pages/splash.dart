@@ -15,12 +15,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  Color selectedColor = Colors.white;
-  int seconds = 0;
-
   @override
   void initState() {
     super.initState();
+    //*Delay time for the splash screen to be showing
     Future.delayed(const Duration(seconds: 2), () async {
       if (AuthController.isAuthnthicated) {
         AuthController.initControllers();
@@ -32,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
+  //*splash scren
   @override
   Widget build(BuildContext context) {
     return Scaffold(

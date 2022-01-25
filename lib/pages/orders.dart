@@ -108,19 +108,18 @@ class _OrderTile extends StatelessWidget {
           children: [
             Text.rich(
               TextSpan(
-                  text: '\u{20BD}',
-                  style: GoogleFonts.roboto(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
+                  text: '${order.netto} ',
+                  style: const TextStyle(
+                      fontFamily: 'GothamPro',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
                       color: kAppPrimaryColor),
                   children: [
                     TextSpan(
-                        text: ' ${order.netto}',
-                        style: const TextStyle(
-                            fontFamily: 'GothamPro',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        text: '\u{20BD}',
+                        style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                             color: kAppPrimaryColor))
                   ]),
             ),

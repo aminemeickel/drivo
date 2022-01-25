@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 
+//* App main values from here you can change the main color website and app name
 const WEBSITE = 'https://backend.drivo.ru';
 const APILINK = '$WEBSITE/api/v1';
 const APPNAME = 'Drivo';

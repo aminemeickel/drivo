@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //*if the map is open or not
   bool listView = true;
   int position = 0;
   var orderController = Get.find<OrderController>();
@@ -239,8 +240,6 @@ class ItemTile extends StatelessWidget {
         return kAppPrimaryColor;
     }
   }
-
-  String get timeState => '';
 
   List<Widget> getRow() {
     switch (_orderStatus) {
